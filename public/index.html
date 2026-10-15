@@ -3,14 +3,30 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>HelloWorld</title>
+  <title>Simple CMS — Fallback Page</title>
   <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
   <main>
-    <h1>Hello from Express + TypeScript</h1>
-    <p>Served from the <code>/public</code> folder.</p>
-    <p>API check: <a href="/api/hello">/api/hello</a> · <a href="/health">/health</a></p>
+    <h1>Fallback frontend (Express <code>/public</code>)</h1>
+    <p class="notice">
+      The Angular production build was <strong>not found</strong>, so Express is serving
+      this fallback page instead. To switch to the Angular frontend:
+    </p>
+    <ol>
+      <li><code>cd frontend-ngx</code></li>
+      <li><code>npm install</code></li>
+      <li><code>npm run build</code></li>
+      <li>Restart this server</li>
+    </ol>
+    <h2>API endpoints</h2>
+    <ul>
+      <li><a href="/api"><code>GET /api</code></a> — API index, lists available endpoints</li>
+      <li><a href="/api/hello"><code>GET /api/hello</code></a> — Sample endpoint → <code>{ "message": "Hello, World!" }</code></li>
+      <li><a href="/health"><code>GET /health</code></a> — Health check → <code>{ "status": "ok" }</code></li>
+    </ul>
+    <h2>Live check</h2>
+    <pre id="live">Loading…</pre>
   </main>
   <script src="/app.js"></script>
 </body>

@@ -1,4 +1,4 @@
-# HelloWorld — Express + TypeScript
+# Simple CMS — Express + TypeScript
 
 Minimal Express.js application in TypeScript that serves a static frontend from `public/` and a JSON API built with Express `Router`s.
 
@@ -59,7 +59,7 @@ When serving the Angular build, unknown non-API `GET` routes fall back to Angula
 ## Project structure
 
 ```
-helloworld/
+simple-cms/
   public/               Static frontend (served at /)
     index.html
     style.css
