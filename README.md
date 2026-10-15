@@ -39,6 +39,14 @@ npm start
 set PORT=3001 && node dist/index.js
 ```
 
+## Database
+
+SQLite via Node's built-in `node:sqlite` + Drizzle ORM (`drizzle-orm@1.0.0-rc.4`, pinned).
+
+- DB file lives at `./db/app.db` (created on first run, git-ignored); override with `DATABASE_PATH`.
+- Schema in `src/db/schema.ts`; migrations in `./drizzle/` (applied automatically at startup).
+- After changing the schema: `npx drizzle-kit generate` (uses `drizzle.config.ts`).
+
 ## Static frontend resolution
 
 `src/app.ts` serves the Angular production build when present, otherwise falls back to `public/`:
@@ -56,6 +64,8 @@ When serving the Angular build, unknown non-API `GET` routes fall back to Angula
 | GET    | `/health`    | Health check → `{ "status": "ok" }`  |
 | GET    | `/api`       | API index, lists available endpoints |
 | GET    | `/api/hello` | Sample endpoint → `{ "message": "Hello, World!" }` |
+| GET/POST | `/api/articles` | List articles / create article |
+| GET/PATCH/DELETE | `/api/articles/:id` | Read / update / delete one article |
 | GET    | `/style.css`, `/app.js`, ... | Any other static file in `public/` |
 
 ## Project structure
