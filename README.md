@@ -66,6 +66,8 @@ When serving the Angular build, unknown non-API `GET` routes fall back to Angula
 | GET    | `/api/hello` | Sample endpoint → `{ "message": "Hello, World!" }` |
 | GET/POST | `/api/articles` | List articles / create article |
 | GET/PATCH/DELETE | `/api/articles/:id` | Read / update / delete one article |
+| GET/POST | `/api/users` | List users / create user (password stored as scrypt hash) |
+| GET/PATCH/DELETE | `/api/users/:id` | Read / update / delete one user |
 | GET    | `/style.css`, `/app.js`, ... | Any other static file in `public/` |
 
 ## Project structure
