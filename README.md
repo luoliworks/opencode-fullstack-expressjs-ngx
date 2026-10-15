@@ -2,6 +2,8 @@
 
 Minimal Express.js application in TypeScript that serves a static frontend from `public/` and a JSON API built with Express `Router`s.
 
+> This project was generated with [OpenCode](https://opencode.ai).
+
 ## Prerequisites
 
 - Node.js (v24 used here)
