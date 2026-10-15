@@ -2,6 +2,7 @@ import { Router, type Request, type Response } from 'express';
 import { eq } from 'drizzle-orm';
 import { db } from '../db/index.js';
 import { articles } from '../db/schema.js';
+import { requireAuth } from '../middleware/requireAuth.js';
 
 const articlesRouter: Router = Router();
 
@@ -36,7 +37,7 @@ function isUniqueViolation(err: unknown): boolean {
 }
 
 // POST /api/articles  { title, slug, content?, status? }
-articlesRouter.post('/', (req: Request, res: Response) => {
+articlesRouter.post('/', requireAuth, (req: Request, res: Response) => {
   const { title, slug, content, status } = req.body as {
     title?: unknown;
     slug?: unknown;
@@ -77,7 +78,7 @@ articlesRouter.post('/', (req: Request, res: Response) => {
 });
 
 // PATCH /api/articles/:id  { title?, slug?, content?, status? }
-articlesRouter.patch('/:id', (req: Request, res: Response) => {
+articlesRouter.patch('/:id', requireAuth, (req: Request, res: Response) => {
   const id: number = Number(req.params.id);
   if (!Number.isInteger(id)) {
     res.status(400).json({ error: 'Invalid id' });
@@ -121,7 +122,7 @@ articlesRouter.patch('/:id', (req: Request, res: Response) => {
 });
 
 // DELETE /api/articles/:id
-articlesRouter.delete('/:id', (req: Request, res: Response) => {
+articlesRouter.delete('/:id', requireAuth, (req: Request, res: Response) => {
   const id: number = Number(req.params.id);
   if (!Number.isInteger(id)) {
     res.status(400).json({ error: 'Invalid id' });

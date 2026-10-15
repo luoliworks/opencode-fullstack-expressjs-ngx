@@ -47,6 +47,13 @@ SQLite via Node's built-in `node:sqlite` + Drizzle ORM (`drizzle-orm@1.0.0-rc.4`
 - Schema in `src/db/schema.ts`; migrations in `./drizzle/` (applied automatically at startup).
 - After changing the schema: `npx drizzle-kit generate` (uses `drizzle.config.ts`).
 
+## Auth
+
+- `POST /api/login` with `{ "username": "<name or email>", "password": "<password>" }` returns `{ "token": "<JWT>", "user": { ... } }`.
+- Send the token on mutating requests: `Authorization: Bearer <JWT>`. All `GET`s stay public; `POST`/`PATCH`/`DELETE` require auth.
+- The very first `POST /api/users` is open (bootstrapping the admin); afterwards it requires auth too.
+- `JWT_SECRET` env var signs tokens (insecure dev fallback with a startup warning if unset); `JWT_EXPIRES_IN` overrides lifetime in seconds (default 7 days).
+
 ## Static frontend resolution
 
 `src/app.ts` serves the Angular production build when present, otherwise falls back to `public/`:
@@ -68,6 +75,7 @@ When serving the Angular build, unknown non-API `GET` routes fall back to Angula
 | GET/PATCH/DELETE | `/api/articles/:id` | Read / update / delete one article |
 | GET/POST | `/api/users` | List users / create user (password stored as scrypt hash) |
 | GET/PATCH/DELETE | `/api/users/:id` | Read / update / delete one user |
+| POST   | `/api/login` | Login with `{ username, password }` → `{ token, user }` |
 | GET    | `/style.css`, `/app.js`, ... | Any other static file in `public/` |
 
 ## Project structure

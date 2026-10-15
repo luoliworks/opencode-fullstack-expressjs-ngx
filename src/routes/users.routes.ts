@@ -1,8 +1,9 @@
-import { Router, type Request, type Response } from 'express';
+import { Router, type NextFunction, type Request, type Response } from 'express';
 import { eq } from 'drizzle-orm';
 import { db } from '../db/index.js';
 import { users, type User } from '../db/schema.js';
 import { hashPassword } from '../utils/password.js';
+import { requireAuth } from '../middleware/requireAuth.js';
 
 const usersRouter: Router = Router();
 
@@ -57,7 +58,18 @@ usersRouter.get('/:id', (req: Request, res: Response) => {
 });
 
 // POST /api/users  { username, email, password, displayName?, role? }
-usersRouter.post('/', (req: Request, res: Response) => {
+// Open only for bootstrapping the very first user; afterwards requires auth.
+usersRouter.post(
+  '/',
+  (req: Request, res: Response, next: NextFunction) => {
+    const existing = db.select({ id: users.id }).from(users).limit(1).all();
+    if (existing.length > 0) {
+      requireAuth(req, res, next);
+      return;
+    }
+    next();
+  },
+  (req: Request, res: Response) => {
   const { username, email, password, displayName, role } = req.body as {
     username?: unknown;
     email?: unknown;
@@ -104,7 +116,7 @@ usersRouter.post('/', (req: Request, res: Response) => {
 });
 
 // PATCH /api/users/:id  { username?, email?, password?, displayName?, role? }
-usersRouter.patch('/:id', (req: Request, res: Response) => {
+usersRouter.patch('/:id', requireAuth, (req: Request, res: Response) => {
   const id: number | null = parseId(req.params.id, res);
   if (id === null) return;
   const { username, email, password, displayName, role } = req.body as {
@@ -155,7 +167,7 @@ usersRouter.patch('/:id', (req: Request, res: Response) => {
 });
 
 // DELETE /api/users/:id
-usersRouter.delete('/:id', (req: Request, res: Response) => {
+usersRouter.delete('/:id', requireAuth, (req: Request, res: Response) => {
   const id: number | null = parseId(req.params.id, res);
   if (id === null) return;
   const row = db.delete(users).where(eq(users.id, id)).returning().get();
