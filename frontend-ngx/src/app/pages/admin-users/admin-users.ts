@@ -5,20 +5,23 @@ import { MatCardModule } from '@angular/material/card';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatTableModule } from '@angular/material/table';
 import { RouterLink } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 import type { PublicUser } from '../../services/auth.service';
+import { LanguageService } from '../../services/language.service';
 import { UsersService } from '../../services/users.service';
 import { apiError } from '../../utils/api-error';
 import { UserDialog } from './user-dialog';
 
 @Component({
   selector: 'app-admin-users',
-  imports: [DatePipe, RouterLink, MatButtonModule, MatCardModule, MatDialogModule, MatTableModule],
+  imports: [DatePipe, RouterLink, MatButtonModule, MatCardModule, MatDialogModule, MatTableModule, TranslatePipe],
   templateUrl: './admin-users.html',
   styleUrl: './admin-users.scss',
 })
 export class AdminUsers implements OnInit {
   private readonly users = inject(UsersService);
   private readonly dialog = inject(MatDialog);
+  private readonly lang = inject(LanguageService);
 
   readonly rows = signal<PublicUser[]>([]);
   readonly loading = signal(true);
@@ -40,7 +43,7 @@ export class AdminUsers implements OnInit {
         this.loading.set(false);
       },
       error: (err: unknown) => {
-        this.error.set(apiError(err, '用户列表加载失败。'));
+        this.error.set(apiError(err, 'users.loadFailList'));
         this.loading.set(false);
       },
     });
@@ -76,7 +79,7 @@ export class AdminUsers implements OnInit {
     this.pendingDeleteId.set(null);
     this.users.remove(id).subscribe({
       next: () => this.load(),
-      error: (err: unknown) => this.error.set(apiError(err, '删除失败。')),
+      error: (err: unknown) => this.error.set(apiError(err, 'common.deleteFailed')),
     });
   }
 }

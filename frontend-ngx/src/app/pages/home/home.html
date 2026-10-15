@@ -1,15 +1,15 @@
 <mat-card class="page-card">
   <mat-card-header>
-    <mat-card-title>文章列表</mat-card-title>
-    <mat-card-subtitle>最新文章</mat-card-subtitle>
+    <mat-card-title>{{ 'home.title' | translate }}</mat-card-title>
+    <mat-card-subtitle>{{ 'home.subtitle' | translate }}</mat-card-subtitle>
   </mat-card-header>
   <mat-card-content>
     @if (loading()) {
-      <p>加载中…</p>
+      <p>{{ 'common.loading' | translate }}</p>
     } @else if (loadError()) {
       <p>{{ loadError() }}</p>
     } @else if (articles().length === 0) {
-      <p>还没有已发布的文章。</p>
+      <p>{{ 'home.empty' | translate }}</p>
     } @else {
       <mat-list>
         @for (a of articles(); track a.id) {
@@ -28,9 +28,4 @@
       />
     }
   </mat-card-content>
-  <!-- 
-  <mat-card-actions>
-    <a mat-button routerLink="/login">登录 / 管理</a>
-  </mat-card-actions>
-  -->
 </mat-card>

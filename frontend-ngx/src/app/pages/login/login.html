@@ -1,5 +1,5 @@
 @if (loading()) {
-  <p>加载中…</p>
+  <p>{{ 'common.loading' | translate }}</p>
 } @else if (loadError()) {
   <mat-card class="auth-card">
     <mat-card-content>
@@ -9,25 +9,25 @@
 } @else {
   <mat-card class="auth-card">
     <mat-card-header>
-      <mat-card-title>{{ setupMode() ? '创建管理员账号' : '登录 Simple CMS' }}</mat-card-title>
+      <mat-card-title>{{ (setupMode() ? 'login.setupTitle' : 'login.title') | translate }}</mat-card-title>
       @if (setupMode()) {
-        <mat-card-subtitle>首次运行，系统中还没有任何用户。创建的第一个账号将成为管理员。</mat-card-subtitle>
+        <mat-card-subtitle>{{ 'login.setupHint' | translate }}</mat-card-subtitle>
       }
     </mat-card-header>
     <mat-card-content>
       <form (ngSubmit)="submit()">
         <mat-form-field appearance="outline" class="full-width">
-          <mat-label>用户名（登录时也可用邮箱）</mat-label>
+          <mat-label>{{ 'login.username' | translate }}</mat-label>
           <input matInput [(ngModel)]="username" name="username" required autocomplete="username" />
         </mat-form-field>
         @if (setupMode()) {
           <mat-form-field appearance="outline" class="full-width">
-            <mat-label>邮箱</mat-label>
+            <mat-label>{{ 'login.email' | translate }}</mat-label>
             <input matInput [(ngModel)]="email" name="email" type="email" required autocomplete="email" />
           </mat-form-field>
         }
         <mat-form-field appearance="outline" class="full-width">
-          <mat-label>密码</mat-label>
+          <mat-label>{{ 'login.password' | translate }}</mat-label>
           <input
             matInput
             [(ngModel)]="password"
@@ -39,7 +39,7 @@
         </mat-form-field>
         @if (setupMode()) {
           <mat-form-field appearance="outline" class="full-width">
-            <mat-label>确认密码</mat-label>
+            <mat-label>{{ 'login.confirmPassword' | translate }}</mat-label>
             <input
               matInput
               [(ngModel)]="confirmPassword"
@@ -54,7 +54,7 @@
           <p class="form-error">{{ error() }}</p>
         }
         <button mat-flat-button color="primary" type="submit" [disabled]="busy()">
-          {{ busy() ? '请稍候…' : (setupMode() ? '创建并登录' : '登录') }}
+          {{ (busy() ? 'common.busy' : (setupMode() ? 'login.submitSetup' : 'login.submitLogin')) | translate }}
         </button>
       </form>
     </mat-card-content>

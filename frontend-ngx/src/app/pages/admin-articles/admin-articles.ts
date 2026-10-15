@@ -6,20 +6,23 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatPaginatorModule, type PageEvent } from '@angular/material/paginator';
 import { MatTableModule } from '@angular/material/table';
 import { RouterLink } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 import type { Article } from '../../services/articles.service';
 import { ArticlesService } from '../../services/articles.service';
+import { LanguageService } from '../../services/language.service';
 import { apiError } from '../../utils/api-error';
 import { ArticleDialog } from './article-dialog';
 
 @Component({
   selector: 'app-admin-articles',
-  imports: [DatePipe, RouterLink, MatButtonModule, MatCardModule, MatDialogModule, MatPaginatorModule, MatTableModule],
+  imports: [DatePipe, RouterLink, MatButtonModule, MatCardModule, MatDialogModule, MatPaginatorModule, MatTableModule, TranslatePipe],
   templateUrl: './admin-articles.html',
   styleUrl: './admin-articles.scss',
 })
 export class AdminArticles implements OnInit {
   private readonly articles = inject(ArticlesService);
   private readonly dialog = inject(MatDialog);
+  private readonly lang = inject(LanguageService);
 
   readonly rows = signal<Article[]>([]);
   readonly total = signal(0);
@@ -51,7 +54,7 @@ export class AdminArticles implements OnInit {
         this.loading.set(false);
       },
       error: (err: unknown) => {
-        this.error.set(apiError(err, '文章列表加载失败。'));
+        this.error.set(apiError(err, 'articles.loadFailList'));
         this.loading.set(false);
       },
     });
@@ -96,7 +99,7 @@ export class AdminArticles implements OnInit {
     this.articles.remove(id).subscribe({
       // If the last row of the page was deleted, step back one page.
       next: () => this.load(this.rows().length <= 1 && this.page() > 1 ? this.page() - 1 : this.page()),
-      error: (err: unknown) => this.error.set(apiError(err, '删除失败。')),
+      error: (err: unknown) => this.error.set(apiError(err, 'common.deleteFailed')),
     });
   }
 }

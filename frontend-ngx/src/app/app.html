@@ -2,16 +2,26 @@
   <a class="brand" routerLink="/">Simple CMS</a>
   <span class="spacer"></span>
   @if (auth.isLoggedIn()) {
-    <a mat-button routerLink="/admin">管理</a>
-    <a mat-button routerLink="/admin/articles">文章</a>
+    <a mat-button routerLink="/admin">{{ 'nav.admin' | translate }}</a>
+    <a mat-button routerLink="/admin/articles">{{ 'nav.articles' | translate }}</a>
     @if (auth.currentUser()?.role === 'admin') {
-      <a mat-button routerLink="/admin/users">用户</a>
+      <a mat-button routerLink="/admin/users">{{ 'nav.users' | translate }}</a>
     }
     <span class="user">{{ auth.currentUser()?.username }}</span>
-    <button mat-button (click)="auth.logout()">退出</button>
+    <button mat-button (click)="auth.logout()">{{ 'nav.logout' | translate }}</button>
   } @else {
-    <a mat-button routerLink="/login">登录</a>
+    <a mat-button routerLink="/login">{{ 'nav.login' | translate }}</a>
   }
+  <button mat-button [matMenuTriggerFor]="langMenu" [attr.aria-label]="'nav.language' | translate">
+    {{ lang.current() === 'zh' ? '中文' : 'EN' }}
+  </button>
+  <mat-menu #langMenu="matMenu">
+    @for (l of lang.available; track l.code) {
+      <button mat-menu-item (click)="lang.switch(l.code)">
+        {{ l.label }}{{ lang.current() === l.code ? ' ✓' : '' }}
+      </button>
+    }
+  </mat-menu>
 </mat-toolbar>
 <main>
   <router-outlet />

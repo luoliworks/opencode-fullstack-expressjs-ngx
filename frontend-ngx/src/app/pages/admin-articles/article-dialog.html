@@ -1,7 +1,7 @@
-<h2 mat-dialog-title>{{ isEdit ? '编辑文章' : '新建文章' }}</h2>
+<h2 mat-dialog-title>{{ (isEdit ? 'articles.dialogEdit' : 'articles.dialogCreate') | translate }}</h2>
 <mat-dialog-content class="dialog-content">
   <mat-form-field appearance="outline" class="full-width">
-    <mat-label>标题</mat-label>
+    <mat-label>{{ 'articles.colTitle' | translate }}</mat-label>
     <input
       matInput
       [(ngModel)]="title"
@@ -12,7 +12,7 @@
     />
   </mat-form-field>
   <mat-form-field appearance="outline" class="full-width">
-    <mat-label>slug（链接唯一标识）</mat-label>
+    <mat-label>{{ 'articles.slugLabel' | translate }}</mat-label>
     <input
       matInput
       [(ngModel)]="slug"
@@ -22,18 +22,18 @@
       autocomplete="off"
     />
     @if (!isEdit) {
-      <mat-hint>根据标题自动生成，可手动修改；纯中文标题请手填英文 slug</mat-hint>
+      <mat-hint>{{ 'articles.slugHint' | translate }}</mat-hint>
     }
   </mat-form-field>
   <mat-form-field appearance="outline" class="full-width">
-    <mat-label>正文</mat-label>
+    <mat-label>{{ 'articles.content' | translate }}</mat-label>
     <textarea matInput [(ngModel)]="content" name="content" rows="6"></textarea>
   </mat-form-field>
   <mat-form-field appearance="outline" class="full-width">
-    <mat-label>状态</mat-label>
+    <mat-label>{{ 'articles.colStatus' | translate }}</mat-label>
     <mat-select [(ngModel)]="status" name="status">
-      <mat-option value="draft">draft（草稿）</mat-option>
-      <mat-option value="published">published（已发布）</mat-option>
+      <mat-option value="draft">{{ 'articles.statusDraft' | translate }}</mat-option>
+      <mat-option value="published">{{ 'articles.statusPublished' | translate }}</mat-option>
     </mat-select>
   </mat-form-field>
   @if (error()) {
@@ -41,8 +41,8 @@
   }
 </mat-dialog-content>
 <mat-dialog-actions align="end">
-  <button mat-button mat-dialog-close [disabled]="busy()">取消</button>
+  <button mat-button mat-dialog-close [disabled]="busy()">{{ 'common.cancel' | translate }}</button>
   <button mat-flat-button color="primary" (click)="save()" [disabled]="busy()">
-    {{ busy() ? '请稍候…' : '保存' }}
+    {{ (busy() ? 'common.busy' : 'common.save') | translate }}
   </button>
 </mat-dialog-actions>

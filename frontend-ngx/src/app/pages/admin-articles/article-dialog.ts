@@ -5,8 +5,10 @@ import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/materia
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { TranslatePipe } from '@ngx-translate/core';
 import type { Article } from '../../services/articles.service';
 import { ArticlesService } from '../../services/articles.service';
+import { LanguageService } from '../../services/language.service';
 import { apiError } from '../../utils/api-error';
 import { slugify } from '../../utils/slug';
 
@@ -16,7 +18,7 @@ export interface ArticleDialogData {
 
 @Component({
   selector: 'app-article-dialog',
-  imports: [FormsModule, MatDialogModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule],
+  imports: [FormsModule, MatDialogModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule, TranslatePipe],
   templateUrl: './article-dialog.html',
   styleUrl: './article-dialog.scss',
 })
@@ -24,6 +26,7 @@ export class ArticleDialog {
   private readonly articles = inject(ArticlesService);
   private readonly ref = inject(MatDialogRef<ArticleDialog, boolean>);
   protected readonly data: ArticleDialogData = inject(MAT_DIALOG_DATA);
+  private readonly lang = inject(LanguageService);
 
   readonly error = signal<string | null>(null);
   readonly busy = signal(false);
@@ -65,7 +68,7 @@ export class ArticleDialog {
     const title = this.title.trim();
     const slug = this.slug.trim();
     if (!title || !slug) {
-      this.error.set('请填写标题和 slug。');
+      this.error.set(this.lang.t('articles.errFill'));
       return;
     }
     this.busy.set(true);

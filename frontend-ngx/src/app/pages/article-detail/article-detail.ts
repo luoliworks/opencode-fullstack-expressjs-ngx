@@ -2,12 +2,13 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
+import { TranslatePipe } from '@ngx-translate/core';
 import type { Article } from '../../services/articles.service';
 import { ArticlesService } from '../../services/articles.service';
 
 @Component({
   selector: 'app-article-detail',
-  imports: [MatCardModule, MatButtonModule, RouterLink],
+  imports: [MatCardModule, MatButtonModule, RouterLink, TranslatePipe],
   templateUrl: './article-detail.html',
   styleUrl: './article-detail.scss',
 })

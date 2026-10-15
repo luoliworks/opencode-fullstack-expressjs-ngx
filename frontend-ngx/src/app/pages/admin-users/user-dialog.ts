@@ -5,7 +5,9 @@ import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/materia
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { TranslatePipe } from '@ngx-translate/core';
 import type { PublicUser } from '../../services/auth.service';
+import { LanguageService } from '../../services/language.service';
 import { UsersService } from '../../services/users.service';
 import { apiError } from '../../utils/api-error';
 
@@ -15,7 +17,7 @@ export interface UserDialogData {
 
 @Component({
   selector: 'app-user-dialog',
-  imports: [FormsModule, MatDialogModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule],
+  imports: [FormsModule, MatDialogModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule, TranslatePipe],
   templateUrl: './user-dialog.html',
   styleUrl: './user-dialog.scss',
 })
@@ -23,6 +25,7 @@ export class UserDialog {
   private readonly users = inject(UsersService);
   private readonly ref = inject(MatDialogRef<UserDialog, boolean>);
   protected readonly data: UserDialogData = inject(MAT_DIALOG_DATA);
+  private readonly lang = inject(LanguageService);
 
   readonly error = signal<string | null>(null);
   readonly busy = signal(false);
@@ -52,15 +55,15 @@ export class UserDialog {
     const username = this.username.trim();
     const email = this.email.trim();
     if (!username || !email.includes('@')) {
-      this.error.set('请填写用户名和有效邮箱。');
+      this.error.set(this.lang.t('users.errFill'));
       return;
     }
     if (!this.isEdit && this.password.length < 8) {
-      this.error.set('新建用户时密码至少 8 位。');
+      this.error.set(this.lang.t('users.errPwCreate'));
       return;
     }
     if (this.isEdit && this.password !== '' && this.password.length < 8) {
-      this.error.set('新密码至少 8 位（留空则不修改）。');
+      this.error.set(this.lang.t('users.errPwEdit'));
       return;
     }
     this.busy.set(true);

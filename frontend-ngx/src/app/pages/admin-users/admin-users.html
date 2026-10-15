@@ -1,45 +1,45 @@
 <mat-card class="page-card">
   <mat-card-header>
-    <mat-card-title>用户管理</mat-card-title>
-    <mat-card-subtitle><a routerLink="/admin">← 返回管理区</a></mat-card-subtitle>
+    <mat-card-title>{{ 'users.title' | translate }}</mat-card-title>
+    <mat-card-subtitle><a routerLink="/admin">{{ 'common.backToAdmin' | translate }}</a></mat-card-subtitle>
   </mat-card-header>
   <mat-card-content>
-    <button mat-flat-button color="primary" (click)="openCreate()">新建用户</button>
+    <button mat-flat-button color="primary" (click)="openCreate()">{{ 'users.create' | translate }}</button>
     @if (loading()) {
-      <p>加载中…</p>
+      <p>{{ 'common.loading' | translate }}</p>
     } @else if (error()) {
       <p class="form-error">{{ error() }}</p>
     } @else {
       <table mat-table [dataSource]="rows()" class="full-width">
         <ng-container matColumnDef="username">
-          <th mat-header-cell *matHeaderCellDef>用户名</th>
+          <th mat-header-cell *matHeaderCellDef>{{ 'users.colUsername' | translate }}</th>
           <td mat-cell *matCellDef="let u">{{ u.username }}</td>
         </ng-container>
         <ng-container matColumnDef="email">
-          <th mat-header-cell *matHeaderCellDef>邮箱</th>
+          <th mat-header-cell *matHeaderCellDef>{{ 'users.colEmail' | translate }}</th>
           <td mat-cell *matCellDef="let u">{{ u.email }}</td>
         </ng-container>
         <ng-container matColumnDef="displayName">
-          <th mat-header-cell *matHeaderCellDef>显示名</th>
+          <th mat-header-cell *matHeaderCellDef>{{ 'users.colDisplayName' | translate }}</th>
           <td mat-cell *matCellDef="let u">{{ u.displayName || '—' }}</td>
         </ng-container>
         <ng-container matColumnDef="role">
-          <th mat-header-cell *matHeaderCellDef>角色</th>
-          <td mat-cell *matCellDef="let u">{{ u.role }}</td>
+          <th mat-header-cell *matHeaderCellDef>{{ 'users.colRole' | translate }}</th>
+          <td mat-cell *matCellDef="let u">{{ ('roles.' + u.role) | translate }}</td>
         </ng-container>
         <ng-container matColumnDef="createdAt">
-          <th mat-header-cell *matHeaderCellDef>创建</th>
+          <th mat-header-cell *matHeaderCellDef>{{ 'users.colCreated' | translate }}</th>
           <td mat-cell *matCellDef="let u">{{ u.createdAt | date: 'yyyy-MM-dd' }}</td>
         </ng-container>
         <ng-container matColumnDef="actions">
-          <th mat-header-cell *matHeaderCellDef>操作</th>
+          <th mat-header-cell *matHeaderCellDef>{{ 'users.colActions' | translate }}</th>
           <td mat-cell *matCellDef="let u">
-            <button mat-button (click)="openEdit(u)">编辑</button>
+            <button mat-button (click)="openEdit(u)">{{ 'common.edit' | translate }}</button>
             @if (pendingDeleteId() === u.id) {
-              <button mat-button color="warn" (click)="deleteUser(u.id)">确认删除？</button>
-              <button mat-button (click)="cancelDelete()">取消</button>
+              <button mat-button color="warn" (click)="deleteUser(u.id)">{{ 'common.confirmDelete' | translate }}</button>
+              <button mat-button (click)="cancelDelete()">{{ 'common.cancel' | translate }}</button>
             } @else {
-              <button mat-button color="warn" (click)="confirmDelete(u.id)">删除</button>
+              <button mat-button color="warn" (click)="confirmDelete(u.id)">{{ 'common.delete' | translate }}</button>
             }
           </td>
         </ng-container>

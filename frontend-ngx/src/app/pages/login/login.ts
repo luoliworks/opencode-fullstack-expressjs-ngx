@@ -5,18 +5,21 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { Router } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 import { AuthService } from '../../services/auth.service';
+import { LanguageService } from '../../services/language.service';
 import { apiError } from '../../utils/api-error';
 
 @Component({
   selector: 'app-login',
-  imports: [FormsModule, MatCardModule, MatFormFieldModule, MatInputModule, MatButtonModule],
+  imports: [FormsModule, MatCardModule, MatFormFieldModule, MatInputModule, MatButtonModule, TranslatePipe],
   templateUrl: './login.html',
   styleUrl: './login.scss',
 })
 export class Login implements OnInit {
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly lang = inject(LanguageService);
 
   readonly loading = signal(true);
   readonly setupMode = signal(false);
@@ -40,7 +43,7 @@ export class Login implements OnInit {
         this.loading.set(false);
       },
       error: () => {
-        this.loadError.set('无法连接后端（/api/setup）。请确认 Express 跑在 :3000，且 ng serve 走了 proxy。');
+        this.loadError.set(this.lang.t('login.errBackendDown'));
         this.loading.set(false);
       },
     });
@@ -59,11 +62,11 @@ export class Login implements OnInit {
     const username = this.username.trim();
     const email = this.email.trim();
     if (!username || !email.includes('@') || this.password.length < 8) {
-      this.error.set('请填写用户名、有效邮箱，且密码至少 8 位。');
+      this.error.set(this.lang.t('login.errFillAll'));
       return;
     }
     if (this.password !== this.confirmPassword) {
-      this.error.set('两次输入的密码不一致，请重新输入。');
+      this.error.set(this.lang.t('login.errPwMismatch'));
       return;
     }
     this.busy.set(true);
@@ -78,7 +81,7 @@ export class Login implements OnInit {
 
   private doLogin(username: string, password: string): void {
     if (!username || !password) {
-      this.error.set('请输入用户名和密码。');
+      this.error.set(this.lang.t('login.errFillLogin'));
       return;
     }
     this.busy.set(true);

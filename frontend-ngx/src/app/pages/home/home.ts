@@ -3,17 +3,20 @@ import { MatCardModule } from '@angular/material/card';
 import { MatListModule } from '@angular/material/list';
 import { MatPaginatorModule, type PageEvent } from '@angular/material/paginator';
 import { RouterLink } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 import type { Article } from '../../services/articles.service';
 import { ArticlesService } from '../../services/articles.service';
+import { LanguageService } from '../../services/language.service';
 
 @Component({
   selector: 'app-home',
-  imports: [MatCardModule, MatListModule, MatPaginatorModule, RouterLink],
+  imports: [MatCardModule, MatListModule, MatPaginatorModule, RouterLink, TranslatePipe],
   templateUrl: './home.html',
   styleUrl: './home.scss',
 })
 export class Home implements OnInit {
   private readonly articlesApi = inject(ArticlesService);
+  private readonly lang = inject(LanguageService);
 
   readonly articles = signal<Article[]>([]);
   readonly total = signal(0);
@@ -42,7 +45,7 @@ export class Home implements OnInit {
         this.loading.set(false);
       },
       error: () => {
-        this.loadError.set('文章加载失败，请确认后端运行正常。');
+        this.loadError.set(this.lang.t('home.loadFail'));
         this.loading.set(false);
       },
     });

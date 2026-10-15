@@ -1,0 +1,139 @@
+{
+  "common": {
+    "loading": "加载中…",
+    "cancel": "取消",
+    "save": "保存",
+    "edit": "编辑",
+    "delete": "删除",
+    "confirmDelete": "确认删除？",
+    "busy": "请稍候…",
+    "backToAdmin": "← 返回管理区",
+    "deleteFailed": "删除失败。"
+  },
+  "nav": {
+    "admin": "管理",
+    "articles": "文章",
+    "users": "用户",
+    "login": "登录",
+    "logout": "退出",
+    "language": "语言"
+  },
+  "login": {
+    "setupTitle": "创建管理员账号",
+    "title": "登录 Simple CMS",
+    "setupHint": "首次运行，系统中还没有任何用户。创建的第一个账号将成为管理员。",
+    "username": "用户名（登录时也可用邮箱）",
+    "email": "邮箱",
+    "password": "密码",
+    "confirmPassword": "确认密码",
+    "submitLogin": "登录",
+    "submitSetup": "创建并登录",
+    "errBackendDown": "无法连接后端（/api/setup）。请确认 Express 跑在 :3000，且 ng serve 走了 proxy。",
+    "errFillAll": "请填写用户名、有效邮箱，且密码至少 8 位。",
+    "errPwMismatch": "两次输入的密码不一致，请重新输入。",
+    "errFillLogin": "请输入用户名和密码。"
+  },
+  "home": {
+    "title": "文章列表",
+    "subtitle": "最新文章",
+    "empty": "还没有已发布的文章。",
+    "loadFail": "文章加载失败，请确认后端运行正常。"
+  },
+  "detail": {
+    "notFound": "文章不存在",
+    "notFoundHint": "可能已被删除或尚未发布。",
+    "backHome": "← 返回首页"
+  },
+  "admin": {
+    "title": "管理区",
+    "requiresLogin": "需登录可见",
+    "manageArticles": "文章管理",
+    "manageUsers": "用户管理",
+    "articles": "文章",
+    "users": "用户",
+    "countArticles": "共 {{count}} 篇",
+    "countUsers": "共 {{count}} 个",
+    "adminOnly": "仅管理员可见",
+    "loadFail": "加载失败",
+    "logout": "退出登录"
+  },
+  "users": {
+    "title": "用户管理",
+    "create": "新建用户",
+    "colUsername": "用户名",
+    "colEmail": "邮箱",
+    "colDisplayName": "显示名",
+    "colRole": "角色",
+    "colCreated": "创建",
+    "colActions": "操作",
+    "loadFailList": "用户列表加载失败。",
+    "dialogEdit": "编辑用户",
+    "dialogCreate": "新建用户",
+    "passwordEdit": "新密码（留空不改）",
+    "passwordCreate": "密码（至少 8 位）",
+    "roleViewer": "viewer（只读）",
+    "roleEditor": "editor（可管文章）",
+    "roleAdmin": "admin（全部权限）",
+    "errFill": "请填写用户名和有效邮箱。",
+    "errPwCreate": "新建用户时密码至少 8 位。",
+    "errPwEdit": "新密码至少 8 位（留空则不修改）。"
+  },
+  "articles": {
+    "title": "文章管理",
+    "create": "新建文章",
+    "colTitle": "标题",
+    "colSlug": "slug",
+    "colStatus": "状态",
+    "colUpdated": "更新",
+    "colActions": "操作",
+    "loadFailList": "文章列表加载失败。",
+    "dialogEdit": "编辑文章",
+    "dialogCreate": "新建文章",
+    "slugLabel": "slug（链接唯一标识）",
+    "slugHint": "根据标题自动生成，可手动修改；纯中文标题请手填英文 slug",
+    "content": "正文",
+    "statusDraft": "draft（草稿）",
+    "statusPublished": "published（已发布）",
+    "errFill": "请填写标题和 slug。"
+  },
+  "roles": {
+    "viewer": "只读",
+    "editor": "编辑",
+    "admin": "管理员"
+  },
+  "status": {
+    "draft": "草稿",
+    "published": "已发布"
+  },
+  "paginator": {
+    "itemsPerPage": "每页条数：",
+    "first": "首页",
+    "previous": "上一页",
+    "next": "下一页",
+    "last": "末页",
+    "range": "第 {{start}} - {{end}} 条，共 {{length}} 条",
+    "rangeEmpty": "共 {{length}} 条"
+  },
+  "errors": {
+    "requestFailed": "请求失败，请重试。",
+    "invalidCredentials": "用户名或密码错误。",
+    "userExists": "用户名或邮箱已存在。",
+    "slugExists": "slug 已存在。",
+    "authHeader": "请先登录。",
+    "tokenInvalid": "登录已过期，请重新登录。",
+    "forbidden": "权限不足。",
+    "authRequired": "需要登录。",
+    "invalidId": "无效的 id。",
+    "notFound": "未找到。",
+    "titleRequired": "请填写标题。",
+    "slugRequired": "请填写 slug。",
+    "statusInvalid": "状态只能是 draft 或 published。",
+    "usernameRequired": "请填写用户名。",
+    "emailInvalid": "请填写有效邮箱。",
+    "passwordShort": "密码至少 8 位。",
+    "roleInvalid": "角色无效。",
+    "loginRequired": "请输入用户名和密码。",
+    "pageInvalid": "分页参数无效。",
+    "slugInvalid": "slug 无效。"
+  }
+}

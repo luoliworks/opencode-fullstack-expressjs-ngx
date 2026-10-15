@@ -1,41 +1,41 @@
 <mat-card class="page-card">
   <mat-card-header>
-    <mat-card-title>文章管理</mat-card-title>
-    <mat-card-subtitle><a routerLink="/admin">← 返回管理区</a></mat-card-subtitle>
+    <mat-card-title>{{ 'articles.title' | translate }}</mat-card-title>
+    <mat-card-subtitle><a routerLink="/admin">{{ 'common.backToAdmin' | translate }}</a></mat-card-subtitle>
   </mat-card-header>
   <mat-card-content>
-    <button mat-flat-button color="primary" (click)="openCreate()">新建文章</button>
+    <button mat-flat-button color="primary" (click)="openCreate()">{{ 'articles.create' | translate }}</button>
     @if (loading()) {
-      <p>加载中…</p>
+      <p>{{ 'common.loading' | translate }}</p>
     } @else if (error()) {
       <p class="form-error">{{ error() }}</p>
     } @else {
       <table mat-table [dataSource]="rows()" class="full-width">
         <ng-container matColumnDef="title">
-          <th mat-header-cell *matHeaderCellDef>标题</th>
+          <th mat-header-cell *matHeaderCellDef>{{ 'articles.colTitle' | translate }}</th>
           <td mat-cell *matCellDef="let a">{{ a.title }}</td>
         </ng-container>
         <ng-container matColumnDef="slug">
-          <th mat-header-cell *matHeaderCellDef>slug</th>
+          <th mat-header-cell *matHeaderCellDef>{{ 'articles.colSlug' | translate }}</th>
           <td mat-cell *matCellDef="let a">{{ a.slug }}</td>
         </ng-container>
         <ng-container matColumnDef="status">
-          <th mat-header-cell *matHeaderCellDef>状态</th>
-          <td mat-cell *matCellDef="let a">{{ a.status }}</td>
+          <th mat-header-cell *matHeaderCellDef>{{ 'articles.colStatus' | translate }}</th>
+          <td mat-cell *matCellDef="let a">{{ ('status.' + a.status) | translate }}</td>
         </ng-container>
         <ng-container matColumnDef="updatedAt">
-          <th mat-header-cell *matHeaderCellDef>更新</th>
+          <th mat-header-cell *matHeaderCellDef>{{ 'articles.colUpdated' | translate }}</th>
           <td mat-cell *matCellDef="let a">{{ a.updatedAt | date: 'yyyy-MM-dd HH:mm' }}</td>
         </ng-container>
         <ng-container matColumnDef="actions">
-          <th mat-header-cell *matHeaderCellDef>操作</th>
+          <th mat-header-cell *matHeaderCellDef>{{ 'articles.colActions' | translate }}</th>
           <td mat-cell *matCellDef="let a">
-            <button mat-button (click)="openEdit(a)">编辑</button>
+            <button mat-button (click)="openEdit(a)">{{ 'common.edit' | translate }}</button>
             @if (pendingDeleteId() === a.id) {
-              <button mat-button color="warn" (click)="deleteArticle(a.id)">确认删除？</button>
-              <button mat-button (click)="cancelDelete()">取消</button>
+              <button mat-button color="warn" (click)="deleteArticle(a.id)">{{ 'common.confirmDelete' | translate }}</button>
+              <button mat-button (click)="cancelDelete()">{{ 'common.cancel' | translate }}</button>
             } @else {
-              <button mat-button color="warn" (click)="confirmDelete(a.id)">删除</button>
+              <button mat-button color="warn" (click)="confirmDelete(a.id)">{{ 'common.delete' | translate }}</button>
             }
           </td>
         </ng-container>

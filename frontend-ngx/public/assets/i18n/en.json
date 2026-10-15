@@ -1,0 +1,139 @@
+{
+  "common": {
+    "loading": "Loading…",
+    "cancel": "Cancel",
+    "save": "Save",
+    "edit": "Edit",
+    "delete": "Delete",
+    "confirmDelete": "Confirm delete?",
+    "busy": "Please wait…",
+    "backToAdmin": "← Back to admin",
+    "deleteFailed": "Delete failed."
+  },
+  "nav": {
+    "admin": "Manage",
+    "articles": "Articles",
+    "users": "Users",
+    "login": "Sign in",
+    "logout": "Sign out",
+    "language": "Language"
+  },
+  "login": {
+    "setupTitle": "Create admin account",
+    "title": "Sign in to Simple CMS",
+    "setupHint": "First run — no users exist yet. The first account will become the administrator.",
+    "username": "Username (or email to sign in)",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "submitLogin": "Sign in",
+    "submitSetup": "Create & sign in",
+    "errBackendDown": "Cannot reach the backend (/api/setup). Make sure Express runs on :3000 and ng serve uses the proxy.",
+    "errFillAll": "Enter a username, a valid email, and a password of at least 8 characters.",
+    "errPwMismatch": "The two passwords do not match, please re-enter.",
+    "errFillLogin": "Enter your username and password."
+  },
+  "home": {
+    "title": "Articles",
+    "subtitle": "Latest",
+    "empty": "No published articles yet.",
+    "loadFail": "Failed to load articles, please make sure the backend is running."
+  },
+  "detail": {
+    "notFound": "Article not found",
+    "notFoundHint": "It may have been deleted or is not published yet.",
+    "backHome": "← Back to home"
+  },
+  "admin": {
+    "title": "Admin",
+    "requiresLogin": "visible when signed in",
+    "manageArticles": "Manage articles",
+    "manageUsers": "Manage users",
+    "articles": "Articles",
+    "users": "Users",
+    "countArticles": "{{count}} articles",
+    "countUsers": "{{count}} users",
+    "adminOnly": "Visible to admins only",
+    "loadFail": "Failed to load",
+    "logout": "Sign out"
+  },
+  "users": {
+    "title": "User management",
+    "create": "New user",
+    "colUsername": "Username",
+    "colEmail": "Email",
+    "colDisplayName": "Display name",
+    "colRole": "Role",
+    "colCreated": "Created",
+    "colActions": "Actions",
+    "loadFailList": "Failed to load users.",
+    "dialogEdit": "Edit user",
+    "dialogCreate": "New user",
+    "passwordEdit": "New password (leave blank to keep)",
+    "passwordCreate": "Password (min 8 chars)",
+    "roleViewer": "viewer (read-only)",
+    "roleEditor": "editor (manages articles)",
+    "roleAdmin": "admin (full access)",
+    "errFill": "Enter a username and a valid email.",
+    "errPwCreate": "New users need a password of at least 8 characters.",
+    "errPwEdit": "New passwords need at least 8 characters (leave blank to keep)."
+  },
+  "articles": {
+    "title": "Article management",
+    "create": "New article",
+    "colTitle": "Title",
+    "colSlug": "slug",
+    "colStatus": "Status",
+    "colUpdated": "Updated",
+    "colActions": "Actions",
+    "loadFailList": "Failed to load articles.",
+    "dialogEdit": "Edit article",
+    "dialogCreate": "New article",
+    "slugLabel": "slug (unique URL id)",
+    "slugHint": "Auto-generated from the title; edit freely. For Chinese-only titles, enter an English slug manually.",
+    "content": "Content",
+    "statusDraft": "draft (draft)",
+    "statusPublished": "published (published)",
+    "errFill": "Enter a title and a slug."
+  },
+  "roles": {
+    "viewer": "viewer",
+    "editor": "editor",
+    "admin": "admin"
+  },
+  "status": {
+    "draft": "draft",
+    "published": "published"
+  },
+  "paginator": {
+    "itemsPerPage": "Items per page:",
+    "first": "First page",
+    "previous": "Previous page",
+    "next": "Next page",
+    "last": "Last page",
+    "range": "{{start}} – {{end}} of {{length}}",
+    "rangeEmpty": "0 of {{length}}"
+  },
+  "errors": {
+    "requestFailed": "Request failed, please retry.",
+    "invalidCredentials": "Invalid username or password.",
+    "userExists": "Username or email already exists.",
+    "slugExists": "Slug already exists.",
+    "authHeader": "Please sign in first.",
+    "tokenInvalid": "Session expired, please sign in again.",
+    "forbidden": "Insufficient permissions.",
+    "authRequired": "Authentication required.",
+    "invalidId": "Invalid id.",
+    "notFound": "Not found.",
+    "titleRequired": "A title is required.",
+    "slugRequired": "A slug is required.",
+    "statusInvalid": "Status must be 'draft' or 'published'.",
+    "usernameRequired": "A username is required.",
+    "emailInvalid": "A valid email is required.",
+    "passwordShort": "Password must be at least 8 characters.",
+    "roleInvalid": "Invalid role.",
+    "loginRequired": "Username and password are required.",
+    "pageInvalid": "Invalid pagination parameters.",
+    "slugInvalid": "Invalid slug."
+  }
+}

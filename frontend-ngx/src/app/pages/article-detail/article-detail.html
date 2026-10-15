@@ -1,15 +1,15 @@
 <mat-card class="page-card">
   @if (loading()) {
     <mat-card-content>
-      <p>加载中…</p>
+      <p>{{ 'common.loading' | translate }}</p>
     </mat-card-content>
   } @else if (notFound() || !article()) {
     <mat-card-header>
-      <mat-card-title>文章不存在</mat-card-title>
-      <mat-card-subtitle>可能已被删除或尚未发布。</mat-card-subtitle>
+      <mat-card-title>{{ 'detail.notFound' | translate }}</mat-card-title>
+      <mat-card-subtitle>{{ 'detail.notFoundHint' | translate }}</mat-card-subtitle>
     </mat-card-header>
     <mat-card-actions>
-      <a mat-button routerLink="/">← 返回首页</a>
+      <a mat-button routerLink="/">{{ 'detail.backHome' | translate }}</a>
     </mat-card-actions>
   } @else {
     <mat-card-header>
@@ -20,7 +20,7 @@
       <p class="content">{{ article()!.content }}</p>
     </mat-card-content>
     <mat-card-actions>
-      <a mat-button routerLink="/">← 返回首页</a>
+      <a mat-button routerLink="/">{{ 'detail.backHome' | translate }}</a>
     </mat-card-actions>
   }
 </mat-card>
