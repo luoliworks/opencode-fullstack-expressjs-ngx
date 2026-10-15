@@ -1,9 +1,9 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { MatCardModule } from '@angular/material/card';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import type { Article } from '../../services/articles.service';
+import { ArticlesService } from '../../services/articles.service';
 
 @Component({
   selector: 'app-article-detail',
@@ -12,7 +12,7 @@ import type { Article } from '../../services/articles.service';
   styleUrl: './article-detail.scss',
 })
 export class ArticleDetail implements OnInit {
-  private readonly http = inject(HttpClient);
+  private readonly articlesApi = inject(ArticlesService);
   private readonly route = inject(ActivatedRoute);
 
   readonly article = signal<Article | null>(null);
@@ -26,11 +26,11 @@ export class ArticleDetail implements OnInit {
       this.loading.set(false);
       return;
     }
-    this.http.get<Article[]>('/api/articles').subscribe({
-      next: (rows) => {
-        const found = rows.find((a) => a.slug === slug && a.status === 'published') ?? null;
-        this.article.set(found);
-        this.notFound.set(found === null);
+    this.articlesApi.getBySlug(slug).subscribe({
+      next: (row) => {
+        // Drafts stay hidden on the public site even if the slug is known.
+        this.article.set(row.status === 'published' ? row : null);
+        this.notFound.set(row.status !== 'published');
         this.loading.set(false);
       },
       error: () => {

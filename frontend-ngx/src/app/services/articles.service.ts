@@ -1,5 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import type { Observable } from 'rxjs';
 
 export interface Article {
   id: number;
@@ -9,6 +10,19 @@ export interface Article {
   status: string;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface ArticlePage {
+  items: Article[];
+  total: number;
+  page: number;
+  pageSize: number;
+}
+
+export interface ArticleQuery {
+  page: number;
+  pageSize: number;
+  status?: string;
 }
 
 export interface CreateArticleInput {
@@ -29,8 +43,20 @@ export interface UpdateArticleInput {
 export class ArticlesService {
   private readonly http = inject(HttpClient);
 
-  list() {
-    return this.http.get<Article[]>('/api/articles');
+  list(): Observable<Article[]>;
+  list(query: ArticleQuery): Observable<ArticlePage>;
+  list(query?: ArticleQuery) {
+    if (!query) return this.http.get<Article[]>('/api/articles');
+    const params: Record<string, string> = {
+      page: String(query.page),
+      pageSize: String(query.pageSize),
+    };
+    if (query.status) params['status'] = query.status;
+    return this.http.get<ArticlePage>('/api/articles', { params });
+  }
+
+  getBySlug(slug: string) {
+    return this.http.get<Article>(`/api/articles/slug/${encodeURIComponent(slug)}`);
   }
 
   create(input: CreateArticleInput) {

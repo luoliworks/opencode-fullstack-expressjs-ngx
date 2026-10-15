@@ -1,35 +1,44 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { MatCardModule } from '@angular/material/card';
 import { MatListModule } from '@angular/material/list';
+import { MatPaginatorModule, type PageEvent } from '@angular/material/paginator';
 import { RouterLink } from '@angular/router';
-
-interface Article {
-  id: number;
-  title: string;
-  slug: string;
-  content: string;
-  status: string;
-}
+import type { Article } from '../../services/articles.service';
+import { ArticlesService } from '../../services/articles.service';
 
 @Component({
   selector: 'app-home',
-  imports: [MatCardModule, MatListModule, RouterLink],
+  imports: [MatCardModule, MatListModule, MatPaginatorModule, RouterLink],
   templateUrl: './home.html',
   styleUrl: './home.scss',
 })
 export class Home implements OnInit {
-  private readonly http = inject(HttpClient);
+  private readonly articlesApi = inject(ArticlesService);
 
   readonly articles = signal<Article[]>([]);
+  readonly total = signal(0);
+  readonly page = signal(1);
+  readonly pageSize = signal(10);
   readonly loading = signal(true);
   readonly loadError = signal<string | null>(null);
 
   ngOnInit(): void {
-    this.http.get<Article[]>('/api/articles').subscribe({
-      next: (rows) => {
-        // Public listing shows published articles only.
-        this.articles.set(rows.filter((a) => a.status === 'published'));
+    this.load(1);
+  }
+
+  onPage(event: PageEvent): void {
+    this.pageSize.set(event.pageSize);
+    this.load(event.pageIndex + 1);
+  }
+
+  private load(page: number): void {
+    this.page.set(page);
+    this.loading.set(true);
+    this.loadError.set(null);
+    this.articlesApi.list({ page, pageSize: this.pageSize(), status: 'published' }).subscribe({
+      next: (res) => {
+        this.articles.set(res.items);
+        this.total.set(res.total);
         this.loading.set(false);
       },
       error: () => {

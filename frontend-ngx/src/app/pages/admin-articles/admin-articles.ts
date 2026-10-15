@@ -3,6 +3,7 @@ import { DatePipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatPaginatorModule, type PageEvent } from '@angular/material/paginator';
 import { MatTableModule } from '@angular/material/table';
 import { RouterLink } from '@angular/router';
 import type { Article } from '../../services/articles.service';
@@ -12,7 +13,7 @@ import { ArticleDialog } from './article-dialog';
 
 @Component({
   selector: 'app-admin-articles',
-  imports: [DatePipe, RouterLink, MatButtonModule, MatCardModule, MatDialogModule, MatTableModule],
+  imports: [DatePipe, RouterLink, MatButtonModule, MatCardModule, MatDialogModule, MatPaginatorModule, MatTableModule],
   templateUrl: './admin-articles.html',
   styleUrl: './admin-articles.scss',
 })
@@ -21,6 +22,9 @@ export class AdminArticles implements OnInit {
   private readonly dialog = inject(MatDialog);
 
   readonly rows = signal<Article[]>([]);
+  readonly total = signal(0);
+  readonly page = signal(1);
+  readonly pageSize = signal(50);
   readonly loading = signal(true);
   readonly error = signal<string | null>(null);
   readonly pendingDeleteId = signal<number | null>(null);
@@ -28,15 +32,22 @@ export class AdminArticles implements OnInit {
   readonly columns = ['title', 'slug', 'status', 'updatedAt', 'actions'];
 
   ngOnInit(): void {
-    this.load();
+    this.load(1);
   }
 
-  load(): void {
+  onPage(event: PageEvent): void {
+    this.pageSize.set(event.pageSize);
+    this.load(event.pageIndex + 1);
+  }
+
+  load(page: number): void {
+    this.page.set(page);
     this.loading.set(true);
     this.error.set(null);
-    this.articles.list().subscribe({
-      next: (rows) => {
-        this.rows.set(rows);
+    this.articles.list({ page, pageSize: this.pageSize() }).subscribe({
+      next: (res) => {
+        this.rows.set(res.items);
+        this.total.set(res.total);
         this.loading.set(false);
       },
       error: (err: unknown) => {
@@ -55,7 +66,7 @@ export class AdminArticles implements OnInit {
       })
       .afterClosed()
       .subscribe((saved) => {
-        if (saved) this.load();
+        if (saved) this.load(1);
       });
   }
 
@@ -68,7 +79,7 @@ export class AdminArticles implements OnInit {
       })
       .afterClosed()
       .subscribe((saved) => {
-        if (saved) this.load();
+        if (saved) this.load(this.page());
       });
   }
 
@@ -83,7 +94,8 @@ export class AdminArticles implements OnInit {
   deleteArticle(id: number): void {
     this.pendingDeleteId.set(null);
     this.articles.remove(id).subscribe({
-      next: () => this.load(),
+      // If the last row of the page was deleted, step back one page.
+      next: () => this.load(this.rows().length <= 1 && this.page() > 1 ? this.page() - 1 : this.page()),
       error: (err: unknown) => this.error.set(apiError(err, '删除失败。')),
     });
   }

@@ -1,5 +1,5 @@
 import { Router, type Request, type Response } from 'express';
-import { eq } from 'drizzle-orm';
+import { count, eq } from 'drizzle-orm';
 import { db } from '../db/index.js';
 import { articles } from '../db/schema.js';
 import { requireAuth } from '../middleware/requireAuth.js';
@@ -7,9 +7,59 @@ import { requireRole } from '../middleware/requireRole.js';
 
 const articlesRouter: Router = Router();
 
+type ArticleStatus = 'draft' | 'published';
+
+function parseStatus(raw: unknown): ArticleStatus | undefined | null {
+  if (raw === undefined) return undefined;
+  if (raw === 'draft' || raw === 'published') return raw;
+  return null;
+}
+
 // GET /api/articles
-articlesRouter.get('/', (_req: Request, res: Response) => {
-  res.json(db.select().from(articles).all());
+// No params -> plain array (legacy shape, unchanged).
+// ?page=&pageSize=[&status=] -> { items, total, page, pageSize }.
+articlesRouter.get('/', (req: Request, res: Response) => {
+  const { page: rawPage, pageSize: rawSize, status: rawStatus } = req.query;
+  if (rawPage === undefined && rawSize === undefined && rawStatus === undefined) {
+    res.json(db.select().from(articles).orderBy(articles.id).all());
+    return;
+  }
+  const page: number = Math.max(1, Number(rawPage ?? 1));
+  const pageSize: number = Math.min(100, Math.max(1, Number(rawSize ?? 20)));
+  if (!Number.isInteger(page) || !Number.isInteger(pageSize)) {
+    res.status(400).json({ error: 'page and pageSize must be positive integers' });
+    return;
+  }
+  const status: ArticleStatus | undefined | null = parseStatus(rawStatus);
+  if (status === null) {
+    res.status(400).json({ error: "status must be 'draft' or 'published'" });
+    return;
+  }
+  const offset: number = (page - 1) * pageSize;
+  const total: number =
+    status === undefined
+      ? (db.select({ n: count() }).from(articles).get()?.n ?? 0)
+      : (db.select({ n: count() }).from(articles).where(eq(articles.status, status)).get()?.n ?? 0);
+  const items =
+    status === undefined
+      ? db.select().from(articles).orderBy(articles.id).limit(pageSize).offset(offset).all()
+      : db.select().from(articles).where(eq(articles.status, status)).orderBy(articles.id).limit(pageSize).offset(offset).all();
+  res.json({ items, total, page, pageSize });
+});
+
+// GET /api/articles/slug/:slug (public, for the detail page)
+articlesRouter.get('/slug/:slug', (req: Request, res: Response) => {
+  const slug = req.params.slug;
+  if (typeof slug !== 'string' || slug === '') {
+    res.status(400).json({ error: 'Invalid slug' });
+    return;
+  }
+  const row = db.select().from(articles).where(eq(articles.slug, slug)).get();
+  if (!row) {
+    res.status(404).json({ error: 'Not found' });
+    return;
+  }
+  res.json(row);
 });
 
 // GET /api/articles/:id
