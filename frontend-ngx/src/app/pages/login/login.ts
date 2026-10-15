@@ -34,6 +34,7 @@ export class Login implements OnInit {
   username = '';
   email = '';
   password = '';
+  confirmPassword = '';
 
   ngOnInit(): void {
     this.auth.needsSetup().subscribe({
@@ -62,6 +63,10 @@ export class Login implements OnInit {
     const email = this.email.trim();
     if (!username || !email.includes('@') || this.password.length < 8) {
       this.error.set('请填写用户名、有效邮箱，且密码至少 8 位。');
+      return;
+    }
+    if (this.password !== this.confirmPassword) {
+      this.error.set('两次输入的密码不一致，请重新输入。');
       return;
     }
     this.busy.set(true);

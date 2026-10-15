@@ -37,6 +37,19 @@
             autocomplete="current-password"
           />
         </mat-form-field>
+        @if (setupMode()) {
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>确认密码</mat-label>
+            <input
+              matInput
+              [(ngModel)]="confirmPassword"
+              name="confirmPassword"
+              type="password"
+              required
+              autocomplete="new-password"
+            />
+          </mat-form-field>
+        }
         @if (error()) {
           <p class="form-error">{{ error() }}</p>
         }
