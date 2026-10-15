@@ -37,6 +37,15 @@ npm start
 set PORT=3001 && node dist/index.js
 ```
 
+## Static frontend resolution
+
+`src/app.ts` serves the Angular production build when present, otherwise falls back to `public/`:
+
+1. `frontend-ngx/dist/frontend-ngx/browser/` — after `npm run build` inside `frontend-ngx/`
+2. `public/` — always in the repo; what a fresh clone serves before the Angular build exists
+
+When serving the Angular build, unknown non-API `GET` routes fall back to Angular's `index.html` (SPA client-side routing). The `public/` fallback keeps its exact legacy behavior (no SPA fallback).
+
 ## Endpoints
 
 | Method | Path         | Description                          |
