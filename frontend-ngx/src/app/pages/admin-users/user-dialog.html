@@ -1,0 +1,43 @@
+<h2 mat-dialog-title>{{ isEdit ? '编辑用户' : '新建用户' }}</h2>
+<mat-dialog-content>
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>用户名</mat-label>
+    <input matInput [(ngModel)]="username" name="username" required autocomplete="off" />
+  </mat-form-field>
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>邮箱</mat-label>
+    <input matInput [(ngModel)]="email" name="email" type="email" required autocomplete="off" />
+  </mat-form-field>
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>{{ isEdit ? '新密码（留空不改）' : '密码（至少 8 位）' }}</mat-label>
+    <input
+      matInput
+      [(ngModel)]="password"
+      name="password"
+      type="password"
+      [required]="!isEdit"
+      autocomplete="new-password"
+    />
+  </mat-form-field>
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>显示名</mat-label>
+    <input matInput [(ngModel)]="displayName" name="displayName" autocomplete="off" />
+  </mat-form-field>
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>角色</mat-label>
+    <mat-select [(ngModel)]="role" name="role">
+      <mat-option value="viewer">viewer（只读）</mat-option>
+      <mat-option value="editor">editor（可管文章）</mat-option>
+      <mat-option value="admin">admin（全部权限）</mat-option>
+    </mat-select>
+  </mat-form-field>
+  @if (error()) {
+    <p class="form-error">{{ error() }}</p>
+  }
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close [disabled]="busy()">取消</button>
+  <button mat-flat-button color="primary" (click)="save()" [disabled]="busy()">
+    {{ busy() ? '请稍候…' : '保存' }}
+  </button>
+</mat-dialog-actions>

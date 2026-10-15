@@ -3,11 +3,12 @@ import { HttpClient } from '@angular/common/http';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatListModule } from '@angular/material/list';
+import { RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-admin',
-  imports: [MatCardModule, MatListModule, MatButtonModule],
+  imports: [MatCardModule, MatListModule, MatButtonModule, RouterLink],
   templateUrl: './admin.html',
   styleUrl: './admin.scss',
 })

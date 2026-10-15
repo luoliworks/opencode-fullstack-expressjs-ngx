@@ -6,6 +6,11 @@
     </mat-card-subtitle>
   </mat-card-header>
   <mat-card-content>
+    @if (auth.currentUser()?.role === 'admin') {
+      <mat-nav-list>
+        <a mat-list-item routerLink="/admin/users">用户管理</a>
+      </mat-nav-list>
+    }
     <mat-list>
       <mat-list-item>
         <span matListItemTitle>文章</span>

@@ -6,14 +6,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
-
-function apiError(err: unknown, fallback = '请求失败，请重试。'): string {
-  const body = (err as { error?: unknown })?.error;
-  if (typeof body === 'object' && body !== null && 'error' in body && typeof body.error === 'string') {
-    return body.error;
-  }
-  return fallback;
-}
+import { apiError } from '../../utils/api-error';
 
 @Component({
   selector: 'app-login',
