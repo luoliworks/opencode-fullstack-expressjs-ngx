@@ -23,8 +23,10 @@
     <ul>
       <li><a href="/api"><code>GET /api</code></a> — API index, lists available endpoints</li>
       <li><a href="/api/hello"><code>GET /api/hello</code></a> — Sample endpoint → <code>{ "message": "Hello, World!" }</code></li>
-      <li><a href="/api/articles"><code>GET /api/articles</code></a> — List articles (POST to create; <code>/api/articles/:id</code> for GET/PATCH/DELETE)</li>
-      <li><a href="/api/users"><code>GET /api/users</code></a> — List users (POST to create; <code>/api/users/:id</code> for GET/PATCH/DELETE)</li>
+      <li><a href="/api/articles"><code>GET /api/articles</code></a> — List articles, newest first (<code>?page=&amp;pageSize=[&amp;status=]</code> for paging; <code>/api/articles/slug/:slug</code> and <code>/api/articles/:id</code> for single reads)</li>
+      <li><a href="/api/users"><code>GET /api/users</code></a> — List users, admin only (<code>/api/users/:id</code> for GET/PATCH/DELETE)</li>
+      <li><code>POST /api/login</code> — Login with <code>{ username, password }</code> → <code>{ token, user }</code></li>
+      <li><a href="/api/setup"><code>GET /api/setup</code></a> — <code>{ needsSetup }</code>, true when the admin account still needs bootstrapping</li>
       <li><a href="/health"><code>GET /health</code></a> — Health check → <code>{ "status": "ok" }</code></li>
     </ul>
     <h2>Live check</h2>
