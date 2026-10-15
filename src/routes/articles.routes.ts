@@ -1,5 +1,5 @@
 import { Router, type Request, type Response } from 'express';
-import { count, eq } from 'drizzle-orm';
+import { count, desc, eq } from 'drizzle-orm';
 import { db } from '../db/index.js';
 import { articles } from '../db/schema.js';
 import { requireAuth } from '../middleware/requireAuth.js';
@@ -21,7 +21,7 @@ function parseStatus(raw: unknown): ArticleStatus | undefined | null {
 articlesRouter.get('/', (req: Request, res: Response) => {
   const { page: rawPage, pageSize: rawSize, status: rawStatus } = req.query;
   if (rawPage === undefined && rawSize === undefined && rawStatus === undefined) {
-    res.json(db.select().from(articles).orderBy(articles.id).all());
+    res.json(db.select().from(articles).orderBy(desc(articles.createdAt), desc(articles.id)).all());
     return;
   }
   const page: number = Math.max(1, Number(rawPage ?? 1));
@@ -42,8 +42,8 @@ articlesRouter.get('/', (req: Request, res: Response) => {
       : (db.select({ n: count() }).from(articles).where(eq(articles.status, status)).get()?.n ?? 0);
   const items =
     status === undefined
-      ? db.select().from(articles).orderBy(articles.id).limit(pageSize).offset(offset).all()
-      : db.select().from(articles).where(eq(articles.status, status)).orderBy(articles.id).limit(pageSize).offset(offset).all();
+      ? db.select().from(articles).orderBy(desc(articles.createdAt), desc(articles.id)).limit(pageSize).offset(offset).all()
+      : db.select().from(articles).where(eq(articles.status, status)).orderBy(desc(articles.createdAt), desc(articles.id)).limit(pageSize).offset(offset).all();
   res.json({ items, total, page, pageSize });
 });
 
