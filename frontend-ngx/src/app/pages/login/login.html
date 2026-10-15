@@ -1,42 +1,49 @@
 @if (loading()) {
   <p>加载中…</p>
 } @else if (loadError()) {
-  <p class="error">{{ loadError() }}</p>
+  <mat-card class="auth-card">
+    <mat-card-content>
+      <p>{{ loadError() }}</p>
+    </mat-card-content>
+  </mat-card>
 } @else {
-  <section class="card">
-    @if (setupMode()) {
-      <h1>创建管理员账号</h1>
-      <p class="hint">首次运行，系统中还没有任何用户。创建的第一个账号将成为管理员。</p>
-    } @else {
-      <h1>登录 Simple CMS</h1>
-    }
-    <form (ngSubmit)="submit()">
-      <label>
-        用户名（登录时也可用邮箱）
-        <input [(ngModel)]="username" name="username" required autocomplete="username" />
-      </label>
+  <mat-card class="auth-card">
+    <mat-card-header>
+      <mat-card-title>{{ setupMode() ? '创建管理员账号' : '登录 Simple CMS' }}</mat-card-title>
       @if (setupMode()) {
-        <label>
-          邮箱
-          <input [(ngModel)]="email" name="email" type="email" required autocomplete="email" />
-        </label>
+        <mat-card-subtitle>首次运行，系统中还没有任何用户。创建的第一个账号将成为管理员。</mat-card-subtitle>
       }
-      <label>
-        密码
-        <input
-          [(ngModel)]="password"
-          name="password"
-          type="password"
-          required
-          autocomplete="current-password"
-        />
-      </label>
-      @if (error()) {
-        <p class="error">{{ error() }}</p>
-      }
-      <button type="submit" [disabled]="busy()">
-        {{ busy() ? '请稍候…' : (setupMode() ? '创建并登录' : '登录') }}
-      </button>
-    </form>
-  </section>
+    </mat-card-header>
+    <mat-card-content>
+      <form (ngSubmit)="submit()">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>用户名（登录时也可用邮箱）</mat-label>
+          <input matInput [(ngModel)]="username" name="username" required autocomplete="username" />
+        </mat-form-field>
+        @if (setupMode()) {
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>邮箱</mat-label>
+            <input matInput [(ngModel)]="email" name="email" type="email" required autocomplete="email" />
+          </mat-form-field>
+        }
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>密码</mat-label>
+          <input
+            matInput
+            [(ngModel)]="password"
+            name="password"
+            type="password"
+            required
+            autocomplete="current-password"
+          />
+        </mat-form-field>
+        @if (error()) {
+          <p class="form-error">{{ error() }}</p>
+        }
+        <button mat-flat-button color="primary" type="submit" [disabled]="busy()">
+          {{ busy() ? '请稍候…' : (setupMode() ? '创建并登录' : '登录') }}
+        </button>
+      </form>
+    </mat-card-content>
+  </mat-card>
 }
