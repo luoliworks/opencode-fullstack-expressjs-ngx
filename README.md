@@ -51,7 +51,8 @@ SQLite via Node's built-in `node:sqlite` + Drizzle ORM (`drizzle-orm@1.0.0-rc.4`
 
 - `POST /api/login` with `{ "username": "<name or email>", "password": "<password>" }` returns `{ "token": "<JWT>", "user": { ... } }`.
 - Send the token on mutating requests: `Authorization: Bearer <JWT>`. All `GET`s stay public; `POST`/`PATCH`/`DELETE` require auth.
-- The very first `POST /api/users` is open (bootstrapping the admin); afterwards it requires auth too.
+- Roles: `viewer` reads only; `editor` additionally manages articles; `admin` additionally manages users (user reads/writes are admin-only). Insufficient role → `403`.
+- The very first `POST /api/users` is open (bootstrapping the admin); afterwards it requires admin too.
 - `JWT_SECRET` env var signs tokens (insecure dev fallback with a startup warning if unset); `JWT_EXPIRES_IN` overrides lifetime in seconds (default 7 days).
 
 ## Static frontend resolution

@@ -4,6 +4,7 @@ import { db } from '../db/index.js';
 import { users, type User } from '../db/schema.js';
 import { hashPassword } from '../utils/password.js';
 import { requireAuth } from '../middleware/requireAuth.js';
+import { requireRole } from '../middleware/requireRole.js';
 
 const usersRouter: Router = Router();
 
@@ -40,13 +41,13 @@ function parseId(raw: string | string[], res: Response): number | null {
   return id;
 }
 
-// GET /api/users
-usersRouter.get('/', (_req: Request, res: Response) => {
+// GET /api/users (admin only)
+usersRouter.get('/', requireAuth, requireRole('admin'), (_req: Request, res: Response) => {
   res.json(db.select().from(users).all().map(toPublic));
 });
 
-// GET /api/users/:id
-usersRouter.get('/:id', (req: Request, res: Response) => {
+// GET /api/users/:id (admin only)
+usersRouter.get('/:id', requireAuth, requireRole('admin'), (req: Request, res: Response) => {
   const id: number | null = parseId(req.params.id, res);
   if (id === null) return;
   const row = db.select().from(users).where(eq(users.id, id)).get();
@@ -58,13 +59,13 @@ usersRouter.get('/:id', (req: Request, res: Response) => {
 });
 
 // POST /api/users  { username, email, password, displayName?, role? }
-// Open only for bootstrapping the very first user; afterwards requires auth.
+// Open only for bootstrapping the very first user; afterwards admin only.
 usersRouter.post(
   '/',
   (req: Request, res: Response, next: NextFunction) => {
     const existing = db.select({ id: users.id }).from(users).limit(1).all();
     if (existing.length > 0) {
-      requireAuth(req, res, next);
+      requireAuth(req, res, () => requireRole('admin')(req, res, next));
       return;
     }
     next();
@@ -116,7 +117,8 @@ usersRouter.post(
 });
 
 // PATCH /api/users/:id  { username?, email?, password?, displayName?, role? }
-usersRouter.patch('/:id', requireAuth, (req: Request, res: Response) => {
+// Admin only — this also keeps `role` (and thus privilege escalation) admin-only.
+usersRouter.patch('/:id', requireAuth, requireRole('admin'), (req: Request, res: Response) => {
   const id: number | null = parseId(req.params.id, res);
   if (id === null) return;
   const { username, email, password, displayName, role } = req.body as {
@@ -166,8 +168,8 @@ usersRouter.patch('/:id', requireAuth, (req: Request, res: Response) => {
   }
 });
 
-// DELETE /api/users/:id
-usersRouter.delete('/:id', requireAuth, (req: Request, res: Response) => {
+// DELETE /api/users/:id (admin only)
+usersRouter.delete('/:id', requireAuth, requireRole('admin'), (req: Request, res: Response) => {
   const id: number | null = parseId(req.params.id, res);
   if (id === null) return;
   const row = db.delete(users).where(eq(users.id, id)).returning().get();

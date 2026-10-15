@@ -37,6 +37,10 @@ export class Login implements OnInit {
   confirmPassword = '';
 
   ngOnInit(): void {
+    if (this.auth.isLoggedIn()) {
+      void this.router.navigate(['/admin']);
+      return;
+    }
     this.auth.needsSetup().subscribe({
       next: (res) => {
         this.setupMode.set(res.needsSetup);
