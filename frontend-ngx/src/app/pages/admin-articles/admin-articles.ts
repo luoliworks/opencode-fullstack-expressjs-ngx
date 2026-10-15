@@ -50,9 +50,7 @@ export class AdminArticles implements OnInit {
     this.dialog
       .open(ArticleDialog, {
         data: {},
-        width: '100vw',
         maxWidth: '100vw',
-        height: '100vh',
         panelClass: 'fullscreen-dialog',
       })
       .afterClosed()
@@ -65,9 +63,7 @@ export class AdminArticles implements OnInit {
     this.dialog
       .open(ArticleDialog, {
         data: { article },
-        width: '100vw',
         maxWidth: '100vw',
-        height: '100vh',
         panelClass: 'fullscreen-dialog',
       })
       .afterClosed()
