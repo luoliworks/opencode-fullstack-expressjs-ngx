@@ -3,6 +3,7 @@
   <span class="spacer"></span>
   @if (auth.isLoggedIn()) {
     <a mat-button routerLink="/admin">管理</a>
+    <a mat-button routerLink="/admin/articles">文章</a>
     @if (auth.currentUser()?.role === 'admin') {
       <a mat-button routerLink="/admin/users">用户</a>
     }

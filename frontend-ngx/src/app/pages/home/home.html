@@ -14,7 +14,7 @@
       <mat-list>
         @for (a of articles(); track a.id) {
           <mat-list-item>
-            <span matListItemTitle>{{ a.title }}</span>
+            <a matListItemTitle [routerLink]="['/a', a.slug]">{{ a.title }}</a>
             <span matListItemLine>{{ a.content.slice(0, 120) }}</span>
           </mat-list-item>
         }

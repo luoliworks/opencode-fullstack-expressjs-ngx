@@ -17,6 +17,7 @@ export interface UserDialogData {
   selector: 'app-user-dialog',
   imports: [FormsModule, MatDialogModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule],
   templateUrl: './user-dialog.html',
+  styleUrl: './user-dialog.scss',
 })
 export class UserDialog {
   private readonly users = inject(UsersService);

@@ -1,0 +1,26 @@
+<mat-card class="page-card">
+  @if (loading()) {
+    <mat-card-content>
+      <p>加载中…</p>
+    </mat-card-content>
+  } @else if (notFound() || !article()) {
+    <mat-card-header>
+      <mat-card-title>文章不存在</mat-card-title>
+      <mat-card-subtitle>可能已被删除或尚未发布。</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-actions>
+      <a mat-button routerLink="/">← 返回首页</a>
+    </mat-card-actions>
+  } @else {
+    <mat-card-header>
+      <mat-card-title>{{ article()!.title }}</mat-card-title>
+      <mat-card-subtitle>/a/{{ article()!.slug }}</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <p class="content">{{ article()!.content }}</p>
+    </mat-card-content>
+    <mat-card-actions>
+      <a mat-button routerLink="/">← 返回首页</a>
+    </mat-card-actions>
+  }
+</mat-card>
