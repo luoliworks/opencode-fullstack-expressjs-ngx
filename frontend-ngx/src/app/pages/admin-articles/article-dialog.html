@@ -2,11 +2,28 @@
 <mat-dialog-content class="dialog-content">
   <mat-form-field appearance="outline" class="full-width">
     <mat-label>标题</mat-label>
-    <input matInput [(ngModel)]="title" name="title" required autocomplete="off" />
+    <input
+      matInput
+      [(ngModel)]="title"
+      (ngModelChange)="onTitleChange($event)"
+      name="title"
+      required
+      autocomplete="off"
+    />
   </mat-form-field>
   <mat-form-field appearance="outline" class="full-width">
     <mat-label>slug（链接唯一标识）</mat-label>
-    <input matInput [(ngModel)]="slug" name="slug" required autocomplete="off" />
+    <input
+      matInput
+      [(ngModel)]="slug"
+      (ngModelChange)="onSlugChange()"
+      name="slug"
+      required
+      autocomplete="off"
+    />
+    @if (!isEdit) {
+      <mat-hint>根据标题自动生成，可手动修改；纯中文标题请手填英文 slug</mat-hint>
+    }
   </mat-form-field>
   <mat-form-field appearance="outline" class="full-width">
     <mat-label>正文</mat-label>

@@ -8,6 +8,7 @@ import { MatSelectModule } from '@angular/material/select';
 import type { Article } from '../../services/articles.service';
 import { ArticlesService } from '../../services/articles.service';
 import { apiError } from '../../utils/api-error';
+import { slugify } from '../../utils/slug';
 
 export interface ArticleDialogData {
   article?: Article; // undefined = create mode
@@ -31,6 +32,7 @@ export class ArticleDialog {
   slug = '';
   content = '';
   status = 'draft';
+  private slugTouched = false;
 
   constructor() {
     const a = this.data.article;
@@ -44,6 +46,18 @@ export class ArticleDialog {
 
   get isEdit(): boolean {
     return this.data.article !== undefined;
+  }
+
+  // Create mode only: derive slug from the title until the user edits it
+  // by hand. Never auto-touches edit mode (would break published URLs).
+  onTitleChange(value: string): void {
+    if (!this.isEdit && !this.slugTouched) {
+      this.slug = slugify(value);
+    }
+  }
+
+  onSlugChange(): void {
+    this.slugTouched = true;
   }
 
   save(): void {
