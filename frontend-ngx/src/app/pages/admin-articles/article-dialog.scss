@@ -2,6 +2,16 @@
   width: 100%;
 }
 
+// Fullscreen shell: keep the form at a readable width, use the extra
+// vertical space for the content editor.
+.dialog-content {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 960px;
+  max-height: calc(100vh - 220px);
+  margin: 0 auto;
+}
+
 textarea {
-  min-height: 220px;
+  min-height: 35vh;
 }

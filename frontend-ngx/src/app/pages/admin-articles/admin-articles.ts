@@ -48,7 +48,13 @@ export class AdminArticles implements OnInit {
 
   openCreate(): void {
     this.dialog
-      .open(ArticleDialog, { data: {}, width: '720px', maxWidth: '94vw' })
+      .open(ArticleDialog, {
+        data: {},
+        width: '100vw',
+        maxWidth: '100vw',
+        height: '100vh',
+        panelClass: 'fullscreen-dialog',
+      })
       .afterClosed()
       .subscribe((saved) => {
         if (saved) this.load();
@@ -57,7 +63,13 @@ export class AdminArticles implements OnInit {
 
   openEdit(article: Article): void {
     this.dialog
-      .open(ArticleDialog, { data: { article }, width: '720px', maxWidth: '94vw' })
+      .open(ArticleDialog, {
+        data: { article },
+        width: '100vw',
+        maxWidth: '100vw',
+        height: '100vh',
+        panelClass: 'fullscreen-dialog',
+      })
       .afterClosed()
       .subscribe((saved) => {
         if (saved) this.load();

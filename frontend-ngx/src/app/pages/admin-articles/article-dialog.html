@@ -1,5 +1,5 @@
 <h2 mat-dialog-title>{{ isEdit ? '编辑文章' : '新建文章' }}</h2>
-<mat-dialog-content>
+<mat-dialog-content class="dialog-content">
   <mat-form-field appearance="outline" class="full-width">
     <mat-label>标题</mat-label>
     <input matInput [(ngModel)]="title" name="title" required autocomplete="off" />
