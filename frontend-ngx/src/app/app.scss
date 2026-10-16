@@ -12,6 +12,39 @@
   margin-right: 0.5rem;
 }
 
+// Brand bar: M3 leaves mat-toolbar pale by default, force the primary color.
+mat-toolbar {
+  background-color: var(--mat-sys-primary);
+  color: var(--mat-sys-on-primary);
+}
+
+// Current section highlight (desktop buttons + open menu items).
+.active-link {
+  background-color: rgba(255, 255, 255, 0.16);
+}
+
+// M3 leaves icon-button glyphs dark by default — unreadable on the blue bar.
+// (NOTE: there is no .mat-icon-button class on the host, only the attribute.)
+mat-toolbar > button mat-icon {
+  color: var(--mat-sys-on-primary);
+}
+
+.avatar-btn {
+  margin-left: 0.25rem;
+}
+
+.avatar-circle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.24);
+  font-size: 1rem;
+  font-weight: 500;
+}
+
 main {
   padding: 1rem;
 }
@@ -27,9 +60,16 @@ main {
     display: none;
   }
 
+  // Brand hides too; the hamburger jumps to the far left via flex order
+  // (it sits after the spacer in the DOM, desktop order untouched).
+  .brand {
+    display: none;
+  }
+
   .mobile-only {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    order: -1;
   }
 }
