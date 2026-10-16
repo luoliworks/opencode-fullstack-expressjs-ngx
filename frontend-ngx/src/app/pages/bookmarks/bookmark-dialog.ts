@@ -14,6 +14,7 @@ import { apiError } from '../../utils/api-error';
   selector: 'app-bookmark-dialog',
   imports: [FormsModule, MatDialogModule, MatFormFieldModule, MatInputModule, MatButtonModule, TranslatePipe],
   templateUrl: './bookmark-dialog.html',
+  styleUrl: './bookmark-dialog.scss',
 })
 export class BookmarkDialog {
   private readonly bookmarks = inject(BookmarksService);
