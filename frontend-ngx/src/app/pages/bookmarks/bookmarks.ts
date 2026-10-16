@@ -2,6 +2,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatPaginatorModule, type PageEvent } from '@angular/material/paginator';
 import { RouterLink } from '@angular/router';
@@ -14,7 +15,7 @@ import { BookmarkDialog } from './bookmark-dialog';
 
 @Component({
   selector: 'app-bookmarks',
-  imports: [MatButtonModule, MatCardModule, MatDialogModule, MatListModule, MatPaginatorModule, RouterLink, TranslatePipe],
+  imports: [MatButtonModule, MatCardModule, MatDialogModule, MatIconModule, MatListModule, MatPaginatorModule, RouterLink, TranslatePipe],
   templateUrl: './bookmarks.html',
   styleUrl: './bookmarks.scss',
 })

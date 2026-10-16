@@ -24,16 +24,34 @@
               <span matListItemLine>{{ b.description }}</span>
             }
             <span matListItemLine class="bookmark-url">{{ b.url }}</span>
+            <div matListItemMeta class="row-actions">
+              <button mat-icon-button (click)="openEdit(b)" [attr.aria-label]="'common.edit' | translate">
+                <mat-icon>edit</mat-icon>
+              </button>
+              @if (pendingDeleteId() === b.id) {
+                <button
+                  mat-icon-button
+                  color="warn"
+                  (click)="deleteBookmark(b.id)"
+                  [attr.aria-label]="'common.confirmDelete' | translate"
+                >
+                  <mat-icon>check</mat-icon>
+                </button>
+                <button mat-icon-button (click)="cancelDelete()" [attr.aria-label]="'common.cancel' | translate">
+                  <mat-icon>close</mat-icon>
+                </button>
+              } @else {
+                <button
+                  mat-icon-button
+                  color="warn"
+                  (click)="confirmDelete(b.id)"
+                  [attr.aria-label]="'common.delete' | translate"
+                >
+                  <mat-icon>delete</mat-icon>
+                </button>
+              }
+            </div>
           </mat-list-item>
-          <div class="bookmark-actions">
-            <button mat-button (click)="openEdit(b)">{{ 'common.edit' | translate }}</button>
-            @if (pendingDeleteId() === b.id) {
-              <button mat-button color="warn" (click)="deleteBookmark(b.id)">{{ 'common.confirmDelete' | translate }}</button>
-              <button mat-button (click)="cancelDelete()">{{ 'common.cancel' | translate }}</button>
-            } @else {
-              <button mat-button color="warn" (click)="confirmDelete(b.id)">{{ 'common.delete' | translate }}</button>
-            }
-          </div>
         }
       </mat-list>
       <mat-paginator
