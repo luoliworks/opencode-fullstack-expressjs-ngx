@@ -1,0 +1,48 @@
+<mat-card class="page-card">
+  <mat-card-header>
+    <mat-card-title>{{ 'bookmarks.title' | translate }}</mat-card-title>
+    <mat-card-subtitle>{{ 'bookmarks.subtitle' | translate }}</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <button mat-flat-button color="primary" (click)="openCreate()">{{ 'bookmarks.create' | translate }}</button>
+    @if (loading()) {
+      <p>{{ 'common.loading' | translate }}</p>
+    } @else if (loadError()) {
+      <p>{{ loadError() }}</p>
+    } @else if (bookmarks().length === 0) {
+      <p>{{ 'bookmarks.empty' | translate }}</p>
+    } @else {
+      <mat-list>
+        @for (b of bookmarks(); track b.id) {
+          <mat-list-item>
+            @if (isExternal(b.url)) {
+              <a matListItemTitle [href]="b.url" target="_blank" rel="noopener">{{ b.title }}</a>
+            } @else {
+              <a matListItemTitle [routerLink]="b.url">{{ b.title }}</a>
+            }
+            @if (b.description) {
+              <span matListItemLine>{{ b.description }}</span>
+            }
+            <span matListItemLine class="bookmark-url">{{ b.url }}</span>
+          </mat-list-item>
+          <div class="bookmark-actions">
+            <button mat-button (click)="openEdit(b)">{{ 'common.edit' | translate }}</button>
+            @if (pendingDeleteId() === b.id) {
+              <button mat-button color="warn" (click)="deleteBookmark(b.id)">{{ 'common.confirmDelete' | translate }}</button>
+              <button mat-button (click)="cancelDelete()">{{ 'common.cancel' | translate }}</button>
+            } @else {
+              <button mat-button color="warn" (click)="confirmDelete(b.id)">{{ 'common.delete' | translate }}</button>
+            }
+          </div>
+        }
+      </mat-list>
+      <mat-paginator
+        [length]="total()"
+        [pageIndex]="page() - 1"
+        [pageSize]="pageSize()"
+        [pageSizeOptions]="[10, 20, 50]"
+        (page)="onPage($event)"
+      />
+    }
+  </mat-card-content>
+</mat-card>

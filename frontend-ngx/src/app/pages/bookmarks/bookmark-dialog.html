@@ -1,0 +1,38 @@
+<h2 mat-dialog-title>{{ (isEdit ? 'bookmarks.dialogEdit' : 'bookmarks.dialogCreate') | translate }}</h2>
+<mat-dialog-content class="dialog-content">
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>{{ 'bookmarks.titleLabel' | translate }}</mat-label>
+    <input
+      matInput
+      [(ngModel)]="title"
+      name="title"
+      required
+      autocomplete="off"
+    />
+  </mat-form-field>
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>{{ 'bookmarks.urlLabel' | translate }}</mat-label>
+    <input
+      matInput
+      [(ngModel)]="url"
+      name="url"
+      required
+      autocomplete="off"
+      placeholder="https://example.com / /a/some-article"
+    />
+    <mat-hint>{{ 'bookmarks.urlHint' | translate }}</mat-hint>
+  </mat-form-field>
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>{{ 'bookmarks.descriptionLabel' | translate }}</mat-label>
+    <textarea matInput [(ngModel)]="description" name="description" rows="3"></textarea>
+  </mat-form-field>
+  @if (error()) {
+    <p class="form-error">{{ error() }}</p>
+  }
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close [disabled]="busy()">{{ 'common.cancel' | translate }}</button>
+  <button mat-flat-button color="primary" (click)="save()" [disabled]="busy()">
+    {{ (busy() ? 'common.busy' : 'common.save') | translate }}
+  </button>
+</mat-dialog-actions>

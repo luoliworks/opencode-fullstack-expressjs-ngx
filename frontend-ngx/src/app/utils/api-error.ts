@@ -11,6 +11,8 @@ const BACKEND_ERROR_KEYS: Record<string, string> = {
   'Invalid id': 'errors.invalidId',
   'Not found': 'errors.notFound',
   'title is required': 'errors.titleRequired',
+  'url is invalid': 'errors.urlInvalid',
+  'url is required': 'errors.urlRequired',
   'slug is required': 'errors.slugRequired',
   "status must be 'draft' or 'published'": 'errors.statusInvalid',
   'username is required': 'errors.usernameRequired',

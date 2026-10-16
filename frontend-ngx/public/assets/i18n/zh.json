@@ -13,6 +13,7 @@
   "nav": {
     "admin": "管理",
     "articles": "文章",
+    "bookmarks": "收藏",
     "users": "用户",
     "login": "登录",
     "logout": "退出",
@@ -42,6 +43,20 @@
     "subtitle": "最新文章",
     "empty": "还没有已发布的文章。",
     "loadFail": "文章加载失败，请确认后端运行正常。"
+  },
+  "bookmarks": {
+    "title": "我的收藏",
+    "subtitle": "你的私人收藏，只有你能看到。",
+    "create": "添加收藏",
+    "empty": "还没有收藏。",
+    "loadFail": "收藏加载失败。",
+    "dialogCreate": "添加收藏",
+    "dialogEdit": "编辑收藏",
+    "titleLabel": "标题",
+    "urlLabel": "URL",
+    "urlHint": "完整地址（https://…）会开新标签页；/a/xxx 这样的站内路径留在本站打开。",
+    "descriptionLabel": "备注（可选）",
+    "errFill": "请填写标题和 URL。"
   },
   "detail": {
     "notFound": "文章不存在",
@@ -130,6 +145,8 @@
     "invalidId": "无效的 id。",
     "notFound": "未找到。",
     "titleRequired": "请填写标题。",
+    "urlRequired": "请填写 URL。",
+    "urlInvalid": "URL 无效，请用完整 https:// 地址或 /a/xxx 这样的站内路径。",
     "slugRequired": "请填写 slug。",
     "statusInvalid": "状态只能是 draft 或 published。",
     "usernameRequired": "请填写用户名。",

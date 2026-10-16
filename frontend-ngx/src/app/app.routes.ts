@@ -7,12 +7,14 @@ import { AdminArticles } from './pages/admin-articles/admin-articles';
 import { AdminUsers } from './pages/admin-users/admin-users';
 import { ArticleDetail } from './pages/article-detail/article-detail';
 import { Articles } from './pages/articles/articles';
+import { Bookmarks } from './pages/bookmarks/bookmarks';
 import { Home } from './pages/home/home';
 import { Login } from './pages/login/login';
 
 export const routes: Routes = [
   { path: '', component: Home },
   { path: 'articles', component: Articles },
+  { path: 'bookmarks', component: Bookmarks, canActivate: [authGuard] },
   { path: 'a/:slug', component: ArticleDetail },
   { path: 'admin', component: Admin, canActivate: [authGuard] },
   { path: 'admin/articles', component: AdminArticles, canActivate: [editorGuard] },

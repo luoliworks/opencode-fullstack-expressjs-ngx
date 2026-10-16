@@ -40,3 +40,25 @@ export const users = sqliteTable('users', {
 
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
+
+// Private per-user bookmarks — each row belongs to exactly one user.
+// No slug/content/status: a title, a URL (absolute https? or site-internal
+// path like /a/some-article), and an optional description.
+export const bookmarks = sqliteTable('bookmarks', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  userId: integer('user_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
+  title: text('title').notNull(),
+  url: text('url').notNull(),
+  description: text('description').notNull().default(''),
+  createdAt: integer('created_at', { mode: 'timestamp' })
+    .notNull()
+    .$defaultFn(() => new Date()),
+  updatedAt: integer('updated_at', { mode: 'timestamp' })
+    .notNull()
+    .$defaultFn(() => new Date()),
+});
+
+export type Bookmark = typeof bookmarks.$inferSelect;
+export type NewBookmark = typeof bookmarks.$inferInsert;
