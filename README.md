@@ -48,6 +48,23 @@ npm run dev
 
 First run in a browser: open `http://localhost:4200` and create the admin account (the backend bootstraps the very first user without auth).
 
+## Frontend routes
+
+| Path | Page | Access |
+| ---- | ---- | ------ |
+| `/` | Project home (info, endpoints, backend live check) | public |
+| `/articles` | Published article list | public |
+| `/a/:slug` | Article detail | public |
+| `/bookmarks` | Own bookmarks, self-managed inline | login |
+| `/login` | Sign in / first-run admin bootstrap | public |
+| `/admin` | Dashboard | login |
+| `/admin/articles` | Article management | editor+ |
+| `/admin/users` | User management | admin |
+
+## i18n
+
+`@ngx-translate/core` + `@ngx-translate/http-loader` (v18), runtime JSON dictionaries in `frontend-ngx/public/assets/i18n/` (`en.json` default, `zh.json`). The toolbar `EN/中文` menu switches at runtime and persists to `localStorage`. Backend English error strings are mapped to keys in `src/app/utils/api-error.ts`. To add a language: add `<lang>.json` and register it in `src/app/services/language.service.ts`.
+
 ## Configuration
 
 - `PORT` env var sets the listen port (default `3000`).
@@ -68,8 +85,8 @@ SQLite via Node's built-in `node:sqlite` + Drizzle ORM (`drizzle-orm@1.0.0-rc.4`
 ## Auth
 
 - `POST /api/login` with `{ "username": "<name or email>", "password": "<password>" }` returns `{ "token": "<JWT>", "user": { ... } }`.
-- Send the token on mutating requests: `Authorization: Bearer <JWT>`. All `GET`s stay public; `POST`/`PATCH`/`DELETE` require auth.
-- Roles: `viewer` reads only; `editor` additionally manages articles; `admin` additionally manages users (user reads/writes are admin-only). Insufficient role → `403`.
+- Send the token on protected requests: `Authorization: Bearer <JWT>`. Article reads stay public; article writes and everything under `/api/bookmarks` require auth.
+- Roles: `viewer` reads only; `editor` additionally manages articles; `admin` additionally manages users (user reads/writes are admin-only). Insufficient role → `403`. Bookmarks are per-user private (any role, strictly your own — even admins can't see others').
 - The very first `POST /api/users` is open (bootstrapping the admin); afterwards it requires admin too.
 - `JWT_SECRET` env var signs tokens (insecure dev fallback with a startup warning if unset); `JWT_EXPIRES_IN` overrides lifetime in seconds (default 7 days).
 
@@ -98,6 +115,9 @@ Articles are ordered newest-first (`createdAt DESC, id DESC`).
 | POST   | `/api/articles` | Create article (editor+) |
 | GET    | `/api/articles/slug/:slug` | Read one article by slug (public) |
 | GET/PATCH/DELETE | `/api/articles/:id` | Read (public) / update+delete (editor+) one article |
+| GET    | `/api/bookmarks` | Own bookmarks, login required (array; with `?page=&pageSize=` → `{ items, total, page, pageSize }`). Non-owned ids answer `404` |
+| POST   | `/api/bookmarks` | Create bookmark (any logged-in user). `{ url, title?, description? }` — blank/missing title falls back to the URL. Accepts absolute `http(s)` URLs and site-internal paths (`/a/xxx`); bare domains get `https://` prepended; other schemes → `400` |
+| PATCH/DELETE | `/api/bookmarks/:id` | Update (blank title falls back to the final URL) / delete own bookmark |
 | GET    | `/api/users` | List users (admin only; open only to bootstrap the first user via POST) |
 | POST   | `/api/users` | Create user (admin only, except the very first bootstrap user) |
 | GET/PATCH/DELETE | `/api/users/:id` | Read / update / delete one user (admin only) |
@@ -111,18 +131,21 @@ simple-cms/
     index.html
     style.css
     app.js
-  frontend-ngx/         Angular frontend (login, public article list/detail, admin area)
+  frontend-ngx/         Angular frontend (home, articles, bookmarks, login, admin area; EN default + ZH via ngx-translate)
     src/app/
-      pages/            home, login, article-detail, admin, admin-articles, admin-users
-      services/         auth, articles, users API clients
+      app.html/app.ts/app.scss  Brand toolbar (responsive hamburger), Manage dropdown, avatar + language menus
+      pages/            home, articles, article-detail, bookmarks (+dialog), login, admin, admin-articles (+dialog), admin-users (+dialog)
+      services/         auth, articles, bookmarks, users API clients; language (translate + persistence)
       guards/           auth (logged in), admin, editor role guards
       interceptors/     Bearer token injection for /api calls
+      utils/            api-error (backend error → i18n key), slug
+    public/assets/i18n/ en.json, zh.json runtime dictionaries
     proxy.conf.json     Dev proxy: /api, /health -> http://localhost:3000
   src/
     index.ts            Server bootstrap (reads PORT, calls listen)
     app.ts              Express app: static hosting + router mounting
     db/
-      schema.ts         Drizzle tables (articles, users)
+      schema.ts         Drizzle tables (articles, users, bookmarks)
       index.ts          node:sqlite connection, WAL pragmas, auto-migration
     middleware/
       requireAuth.ts    Bearer JWT check (401)
@@ -130,6 +153,7 @@ simple-cms/
     routes/
       api.routes.ts     Aggregates all /api/* routers
       articles.routes.ts Articles CRUD + pagination + slug lookup
+      bookmarks.routes.ts Private per-user bookmarks CRUD (auth only, no roles)
       users.routes.ts   Users CRUD (admin, bootstrap-open for the first user)
       auth.routes.ts    POST /api/login
       setup.routes.ts   GET /api/setup (needsSetup flag)
