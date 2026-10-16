@@ -3,29 +3,4 @@
     <mat-card-title>{{ 'home.title' | translate }}</mat-card-title>
     <mat-card-subtitle>{{ 'home.subtitle' | translate }}</mat-card-subtitle>
   </mat-card-header>
-  <mat-card-content>
-    @if (loading()) {
-      <p>{{ 'common.loading' | translate }}</p>
-    } @else if (loadError()) {
-      <p>{{ loadError() }}</p>
-    } @else if (articles().length === 0) {
-      <p>{{ 'home.empty' | translate }}</p>
-    } @else {
-      <mat-list>
-        @for (a of articles(); track a.id) {
-          <mat-list-item>
-            <a matListItemTitle [routerLink]="['/a', a.slug]">{{ a.title }}</a>
-            <span matListItemLine>{{ a.content.slice(0, 120) }}</span>
-          </mat-list-item>
-        }
-      </mat-list>
-      <mat-paginator
-        [length]="total()"
-        [pageIndex]="page() - 1"
-        [pageSize]="pageSize()"
-        [pageSizeOptions]="[10, 20, 50]"
-        (page)="onPage($event)"
-      />
-    }
-  </mat-card-content>
 </mat-card>

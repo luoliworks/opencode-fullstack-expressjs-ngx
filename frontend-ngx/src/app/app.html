@@ -1,5 +1,6 @@
 <mat-toolbar color="primary">
   <a class="brand" routerLink="/">Simple CMS</a>
+  <a mat-button routerLink="/articles">{{ 'nav.articles' | translate }}</a>
   <span class="spacer"></span>
   @if (auth.isLoggedIn()) {
     <a mat-button routerLink="/admin">{{ 'nav.admin' | translate }}</a>

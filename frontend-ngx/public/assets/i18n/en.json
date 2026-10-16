@@ -34,6 +34,10 @@
     "errFillLogin": "Enter your username and password."
   },
   "home": {
+    "title": "Welcome",
+    "subtitle": "Homepage content coming soon."
+  },
+  "articlesList": {
     "title": "Articles",
     "subtitle": "Latest",
     "empty": "No published articles yet.",

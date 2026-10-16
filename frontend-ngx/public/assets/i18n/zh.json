@@ -34,6 +34,10 @@
     "errFillLogin": "请输入用户名和密码。"
   },
   "home": {
+    "title": "欢迎",
+    "subtitle": "新版首页内容即将到来。"
+  },
+  "articlesList": {
     "title": "文章列表",
     "subtitle": "最新文章",
     "empty": "还没有已发布的文章。",
