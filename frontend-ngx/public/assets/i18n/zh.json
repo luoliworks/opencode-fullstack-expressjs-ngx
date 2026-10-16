@@ -78,7 +78,7 @@
   "detail": {
     "notFound": "文章不存在",
     "notFoundHint": "可能已被删除或尚未发布。",
-    "backHome": "← 返回首页"
+    "backToArticles": "← 返回文章列表"
   },
   "admin": {
     "title": "管理区",

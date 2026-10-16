@@ -77,7 +77,7 @@
   "detail": {
     "notFound": "Article not found",
     "notFoundHint": "It may have been deleted or is not published yet.",
-    "backHome": "← Back to home"
+    "backToArticles": "← Back to articles"
   },
   "admin": {
     "title": "Admin",

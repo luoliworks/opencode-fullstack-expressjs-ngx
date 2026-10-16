@@ -9,7 +9,7 @@
       <mat-card-subtitle>{{ 'detail.notFoundHint' | translate }}</mat-card-subtitle>
     </mat-card-header>
     <mat-card-actions>
-      <a mat-button routerLink="/">{{ 'detail.backHome' | translate }}</a>
+      <a mat-button routerLink="/articles">{{ 'detail.backToArticles' | translate }}</a>
     </mat-card-actions>
   } @else {
     <mat-card-header>
@@ -20,7 +20,7 @@
       <p class="content">{{ article()!.content }}</p>
     </mat-card-content>
     <mat-card-actions>
-      <a mat-button routerLink="/">{{ 'detail.backHome' | translate }}</a>
+      <a mat-button routerLink="/articles">{{ 'detail.backToArticles' | translate }}</a>
     </mat-card-actions>
   }
 </mat-card>

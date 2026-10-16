@@ -18,6 +18,13 @@ mat-toolbar {
   color: var(--mat-sys-on-primary);
 }
 
+// M3 buttons set their own label color (dark), ignoring the inherited
+// on-primary — pin toolbar button text to white explicitly.
+mat-toolbar .mat-mdc-button,
+mat-toolbar .mat-mdc-button .mdc-button__label {
+  color: var(--mat-sys-on-primary);
+}
+
 // Current section highlight (desktop buttons + open menu items).
 .active-link {
   background-color: rgba(255, 255, 255, 0.16);
