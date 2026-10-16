@@ -17,7 +17,8 @@
     "users": "用户",
     "login": "登录",
     "logout": "退出",
-    "language": "语言"
+    "language": "语言",
+    "menu": "菜单"
   },
   "login": {
     "setupTitle": "创建管理员账号",

@@ -17,7 +17,8 @@
     "users": "Users",
     "login": "Sign in",
     "logout": "Sign out",
-    "language": "Language"
+    "language": "Language",
+    "menu": "Menu"
   },
   "login": {
     "setupTitle": "Create admin account",    "title": "Sign in to Simple CMS",

@@ -1,19 +1,21 @@
 <mat-toolbar color="primary">
   <a class="brand" routerLink="/">Simple CMS</a>
-  <a mat-button routerLink="/articles">{{ 'nav.articles' | translate }}</a>
+  <a mat-button class="desktop-only" routerLink="/articles">{{ 'nav.articles' | translate }}</a>
   <span class="spacer"></span>
-  @if (auth.isLoggedIn()) {
-    <a mat-button routerLink="/bookmarks">{{ 'nav.bookmarks' | translate }}</a>
-    <a mat-button routerLink="/admin">{{ 'nav.admin' | translate }}</a>
-    <a mat-button routerLink="/admin/articles">{{ 'nav.articles' | translate }}</a>
-    @if (auth.currentUser()?.role === 'admin') {
-      <a mat-button routerLink="/admin/users">{{ 'nav.users' | translate }}</a>
+  <nav class="desktop-nav">
+    @if (auth.isLoggedIn()) {
+      <a mat-button routerLink="/bookmarks">{{ 'nav.bookmarks' | translate }}</a>
+      <a mat-button routerLink="/admin">{{ 'nav.admin' | translate }}</a>
+      <a mat-button routerLink="/admin/articles">{{ 'nav.articles' | translate }}</a>
+      @if (auth.currentUser()?.role === 'admin') {
+        <a mat-button routerLink="/admin/users">{{ 'nav.users' | translate }}</a>
+      }
+      <span class="user">{{ auth.currentUser()?.username }}</span>
+      <button mat-button (click)="auth.logout()">{{ 'nav.logout' | translate }}</button>
+    } @else {
+      <a mat-button routerLink="/login">{{ 'nav.login' | translate }}</a>
     }
-    <span class="user">{{ auth.currentUser()?.username }}</span>
-    <button mat-button (click)="auth.logout()">{{ 'nav.logout' | translate }}</button>
-  } @else {
-    <a mat-button routerLink="/login">{{ 'nav.login' | translate }}</a>
-  }
+  </nav>
   <button mat-button [matMenuTriggerFor]="langMenu" [attr.aria-label]="'nav.language' | translate">
     {{ lang.current() === 'zh' ? '中文' : 'EN' }}
   </button>
@@ -22,6 +24,29 @@
       <button mat-menu-item (click)="lang.switch(l.code)">
         {{ l.label }}{{ lang.current() === l.code ? ' ✓' : '' }}
       </button>
+    }
+  </mat-menu>
+  <button
+    mat-icon-button
+    class="mobile-only"
+    [matMenuTriggerFor]="navMenu"
+    [attr.aria-label]="'nav.menu' | translate"
+  >
+    <mat-icon>menu</mat-icon>
+  </button>
+  <mat-menu #navMenu="matMenu">
+    <a mat-menu-item routerLink="/articles">{{ 'nav.articles' | translate }}</a>
+    @if (auth.isLoggedIn()) {
+      <a mat-menu-item routerLink="/bookmarks">{{ 'nav.bookmarks' | translate }}</a>
+      <a mat-menu-item routerLink="/admin">{{ 'nav.admin' | translate }}</a>
+      <a mat-menu-item routerLink="/admin/articles">{{ 'nav.articles' | translate }}</a>
+      @if (auth.currentUser()?.role === 'admin') {
+        <a mat-menu-item routerLink="/admin/users">{{ 'nav.users' | translate }}</a>
+      }
+      <button mat-menu-item disabled>{{ auth.currentUser()?.username }}</button>
+      <button mat-menu-item (click)="auth.logout()">{{ 'nav.logout' | translate }}</button>
+    } @else {
+      <a mat-menu-item routerLink="/login">{{ 'nav.login' | translate }}</a>
     }
   </mat-menu>
 </mat-toolbar>
