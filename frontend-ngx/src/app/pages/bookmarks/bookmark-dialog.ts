@@ -47,7 +47,7 @@ export class BookmarkDialog {
     this.error.set(null);
     const title = this.title.trim();
     const url = this.url.trim();
-    if (!title || !url) {
+    if (!url) {
       this.error.set(this.lang.t('bookmarks.errFill'));
       return;
     }

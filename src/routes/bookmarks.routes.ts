@@ -54,17 +54,14 @@ bookmarksRouter.get('/', requireAuth, (req: Request, res: Response) => {
   res.json({ items, total, page, pageSize });
 });
 
-// POST /api/bookmarks  { title, url, description? }
+// POST /api/bookmarks  { url, title?, description? }
+// Title is optional — blank/missing titles fall back to the normalized URL.
 bookmarksRouter.post('/', requireAuth, (req: Request, res: Response) => {
   const { title, url, description } = req.body as {
     title?: unknown;
     url?: unknown;
     description?: unknown;
   };
-  if (typeof title !== 'string' || title.trim() === '') {
-    res.status(400).json({ error: 'title is required' });
-    return;
-  }
   const normalized: string | null = normalizeUrl(url);
   if (normalized === null) {
     res.status(400).json({ error: 'url is invalid' });
@@ -74,7 +71,7 @@ bookmarksRouter.post('/', requireAuth, (req: Request, res: Response) => {
     .insert(bookmarks)
     .values({
       userId: req.auth!.sub,
-      title: title.trim(),
+      title: typeof title === 'string' && title.trim() !== '' ? title.trim() : normalized,
       url: normalized,
       description: typeof description === 'string' ? description : '',
     })
@@ -84,6 +81,7 @@ bookmarksRouter.post('/', requireAuth, (req: Request, res: Response) => {
 });
 
 // PATCH /api/bookmarks/:id  { title?, url?, description? }
+// A blank title falls back to the final (new or existing) URL.
 bookmarksRouter.patch('/:id', requireAuth, (req: Request, res: Response) => {
   const id: number | null = parseId(req.params.id);
   if (id === null) {
@@ -104,10 +102,22 @@ bookmarksRouter.patch('/:id', requireAuth, (req: Request, res: Response) => {
     }
     normalized = parsed;
   }
+  const existing = db
+    .select()
+    .from(bookmarks)
+    .where(and(eq(bookmarks.id, id), eq(bookmarks.userId, req.auth!.sub)))
+    .get();
+  if (!existing) {
+    res.status(404).json({ error: 'Not found' });
+    return;
+  }
+  const finalUrl: string = normalized ?? existing.url;
   const row = db
     .update(bookmarks)
     .set({
-      ...(typeof title === 'string' ? { title } : {}),
+      ...(title === undefined || typeof title !== 'string'
+        ? {}
+        : { title: title.trim() !== '' ? title.trim() : finalUrl }),
       ...(normalized === undefined ? {} : { url: normalized }),
       ...(typeof description === 'string' ? { description } : {}),
       updatedAt: new Date(),

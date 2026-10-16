@@ -53,10 +53,11 @@
     "dialogCreate": "添加收藏",
     "dialogEdit": "编辑收藏",
     "titleLabel": "标题",
+    "titleHint": "可选，为空时用 URL 代替。",
     "urlLabel": "URL",
     "urlHint": "完整 https 地址开新标签页，/a/xxx 站内打开。",
     "descriptionLabel": "备注（可选）",
-    "errFill": "请填写标题和 URL。"
+    "errFill": "请填写 URL。"
   },
   "detail": {
     "notFound": "文章不存在",

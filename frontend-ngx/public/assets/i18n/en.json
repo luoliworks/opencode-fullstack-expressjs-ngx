@@ -52,10 +52,11 @@
     "dialogCreate": "Add bookmark",
     "dialogEdit": "Edit bookmark",
     "titleLabel": "Title",
+    "titleHint": "Optional — the URL is used when empty.",
     "urlLabel": "URL",
     "urlHint": "Full URL opens a new tab; /a/xxx stays on this site.",
     "descriptionLabel": "Description (optional)",
-    "errFill": "Enter a title and a URL."
+    "errFill": "Enter a URL."
   },
   "detail": {
     "notFound": "Article not found",

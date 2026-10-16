@@ -25,7 +25,7 @@ export interface BookmarkQuery {
 }
 
 export interface CreateBookmarkInput {
-  title: string;
+  title?: string;
   url: string;
   description?: string;
 }

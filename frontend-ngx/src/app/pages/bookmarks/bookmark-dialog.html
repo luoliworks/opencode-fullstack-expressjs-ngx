@@ -1,15 +1,16 @@
 <h2 mat-dialog-title>{{ (isEdit ? 'bookmarks.dialogEdit' : 'bookmarks.dialogCreate') | translate }}</h2>
 <mat-dialog-content class="dialog-content">
-  <mat-form-field appearance="outline" class="full-width">
+  <mat-form-field appearance="outline" class="full-width" subscriptSizing="dynamic">
     <mat-label>{{ 'bookmarks.titleLabel' | translate }}</mat-label>
     <input
       matInput
       [(ngModel)]="title"
       name="title"
-      required
       autocomplete="off"
     />
+    <mat-hint>{{ 'bookmarks.titleHint' | translate }}</mat-hint>
   </mat-form-field>
+  <div style="height: 16px;"></div>
   <mat-form-field appearance="outline" class="full-width" subscriptSizing="dynamic">
     <mat-label>{{ 'bookmarks.urlLabel' | translate }}</mat-label>
     <input
