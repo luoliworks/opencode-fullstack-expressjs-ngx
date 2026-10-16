@@ -34,8 +34,23 @@
     "errFillLogin": "Enter your username and password."
   },
   "home": {
-    "title": "Welcome",
-    "subtitle": "Homepage content coming soon."
+    "title": "Simple CMS",
+    "subtitle": "A simple CMS experiment.",
+    "aboutTitle": "About this project",
+    "aboutBody": "Simple CMS is a small experimental content-management project: an Express + SQLite API with an Angular frontend. It was built with OpenCode.",
+    "browseArticles": "Browse articles",
+    "signIn": "Sign in",
+    "apiTitle": "API endpoints",
+    "apiRoot": "API index, lists available endpoints.",
+    "apiHello": "Sample endpoint.",
+    "apiArticles": "List articles, newest first — ?page=&pageSize=[&status=] for paging, plus /slug/:slug and /:id reads. Reads are public, writes need an editor role.",
+    "apiBookmarks": "Private per-user bookmarks, login required — GET/POST plus PATCH/DELETE /:id, strictly scoped to yourself.",
+    "apiUsers": "List users, admin only — GET/PATCH/DELETE /:id.",
+    "apiLogin": "Sign in with { username, password } → { token, user }.",
+    "apiSetup": "{ needsSetup }, true when the admin account still needs bootstrapping.",
+    "apiHealth": "Health check.",
+    "liveTitle": "Live check",
+    "liveFail": "Backend unreachable."
   },
   "articlesList": {
     "title": "Articles",

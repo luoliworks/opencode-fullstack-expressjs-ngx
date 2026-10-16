@@ -3,4 +3,53 @@
     <mat-card-title>{{ 'home.title' | translate }}</mat-card-title>
     <mat-card-subtitle>{{ 'home.subtitle' | translate }}</mat-card-subtitle>
   </mat-card-header>
+  <mat-card-content>
+    <h3>{{ 'home.aboutTitle' | translate }}</h3>
+    <p>{{ 'home.aboutBody' | translate }}</p>
+    <div class="home-actions">
+      <a mat-flat-button color="primary" routerLink="/articles">{{ 'home.browseArticles' | translate }}</a>
+      <a mat-button routerLink="/login">{{ 'home.signIn' | translate }}</a>
+    </div>
+    <h3>{{ 'home.apiTitle' | translate }}</h3>
+    <mat-list>
+      <mat-list-item>
+        <a matListItemTitle href="/api"><code>GET /api</code></a>
+        <span matListItemLine>{{ 'home.apiRoot' | translate }}</span>
+      </mat-list-item>
+      <mat-list-item>
+        <a matListItemTitle href="/api/hello"><code>GET /api/hello</code></a>
+        <span matListItemLine>{{ 'home.apiHello' | translate }}</span>
+      </mat-list-item>
+      <mat-list-item>
+        <a matListItemTitle href="/api/articles"><code>GET /api/articles</code></a>
+        <span matListItemLine>{{ 'home.apiArticles' | translate }}</span>
+      </mat-list-item>
+      <mat-list-item>
+        <span matListItemTitle><code>GET / POST /api/bookmarks</code></span>
+        <span matListItemLine>{{ 'home.apiBookmarks' | translate }}</span>
+      </mat-list-item>
+      <mat-list-item>
+        <span matListItemTitle><code>GET /api/users</code></span>
+        <span matListItemLine>{{ 'home.apiUsers' | translate }}</span>
+      </mat-list-item>
+      <mat-list-item>
+        <span matListItemTitle><code>POST /api/login</code></span>
+        <span matListItemLine>{{ 'home.apiLogin' | translate }}</span>
+      </mat-list-item>
+      <mat-list-item>
+        <a matListItemTitle href="/api/setup"><code>GET /api/setup</code></a>
+        <span matListItemLine>{{ 'home.apiSetup' | translate }}</span>
+      </mat-list-item>
+      <mat-list-item>
+        <a matListItemTitle href="/health"><code>GET /health</code></a>
+        <span matListItemLine>{{ 'home.apiHealth' | translate }}</span>
+      </mat-list-item>
+    </mat-list>
+    <h3>{{ 'home.liveTitle' | translate }}</h3>
+    @if (health() === null) {
+      <p>{{ 'common.loading' | translate }}</p>
+    } @else {
+      <pre class="home-live">{{ health() }}</pre>
+    }
+  </mat-card-content>
 </mat-card>

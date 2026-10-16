@@ -35,8 +35,23 @@
     "errFillLogin": "请输入用户名和密码。"
   },
   "home": {
-    "title": "欢迎",
-    "subtitle": "新版首页内容即将到来。"
+    "title": "Simple CMS",
+    "subtitle": "一个简单的 CMS 试验项目。",
+    "aboutTitle": "关于本项目",
+    "aboutBody": "Simple CMS 是一个小型的试验性内容管理项目：Express + SQLite 后端接口，Angular 前端。本项目由 OpenCode 开发。",
+    "browseArticles": "浏览文章",
+    "signIn": "登录",
+    "apiTitle": "API 端点",
+    "apiRoot": "API 索引，列出可用端点。",
+    "apiHello": "示例端点。",
+    "apiArticles": "文章列表，最新优先——可用 ?page=&pageSize=[&status=] 分页，另有 /slug/:slug 与 /:id 单篇读取。读取公开，写入需 editor 权限。",
+    "apiBookmarks": "每用户私有的收藏，须登录——GET/POST 及 PATCH/DELETE /:id，只能操作自己的。",
+    "apiUsers": "用户列表，仅 admin——GET/PATCH/DELETE /:id。",
+    "apiLogin": "用 { username, password } 登录 → { token, user }。",
+    "apiSetup": "{ needsSetup }，admin 账号待初始化时为 true。",
+    "apiHealth": "健康检查。",
+    "liveTitle": "实时检查",
+    "liveFail": "后端不可达。"
   },
   "articlesList": {
     "title": "文章列表",
