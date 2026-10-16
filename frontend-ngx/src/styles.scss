@@ -43,3 +43,12 @@ body {
 .fullscreen-dialog .mat-mdc-dialog-surface {
   border-radius: 0;
 }
+
+// Material zeroes the content's top padding when a dialog title is present
+// (.mat-mdc-dialog-title + .mat-mdc-dialog-content { padding-top: 0 }).
+// With overflow: auto that clips the floating outline label of the first
+// field (measured: label floats 7px above a zero-padded content box).
+// Doubled class beats Material's rule on specificity (same order-safe).
+.mat-mdc-dialog-container .mat-mdc-dialog-title + .mat-mdc-dialog-content.mat-mdc-dialog-content {
+  padding-top: 12px;
+}

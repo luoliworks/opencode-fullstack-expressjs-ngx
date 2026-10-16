@@ -53,7 +53,7 @@
     "dialogEdit": "Edit bookmark",
     "titleLabel": "Title",
     "urlLabel": "URL",
-    "urlHint": "Full address (https://…) opens a new tab; a site path like /a/xxx stays on this site.",
+    "urlHint": "Full URL opens a new tab; /a/xxx stays on this site.",
     "descriptionLabel": "Description (optional)",
     "errFill": "Enter a title and a URL."
   },

@@ -54,7 +54,7 @@
     "dialogEdit": "编辑收藏",
     "titleLabel": "标题",
     "urlLabel": "URL",
-    "urlHint": "完整地址（https://…）会开新标签页；/a/xxx 这样的站内路径留在本站打开。",
+    "urlHint": "完整 https 地址开新标签页，/a/xxx 站内打开。",
     "descriptionLabel": "备注（可选）",
     "errFill": "请填写标题和 URL。"
   },
