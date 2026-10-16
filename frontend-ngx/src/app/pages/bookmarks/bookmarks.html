@@ -25,7 +25,7 @@
             }
             <span matListItemLine class="bookmark-url">{{ b.url }}</span>
             <div matListItemMeta class="row-actions">
-              <button mat-icon-button (click)="openEdit(b)" [attr.aria-label]="'common.edit' | translate">
+              <button mat-icon-button color="primary" (click)="openEdit(b)" [attr.aria-label]="'common.edit' | translate">
                 <mat-icon>edit</mat-icon>
               </button>
               @if (pendingDeleteId() === b.id) {

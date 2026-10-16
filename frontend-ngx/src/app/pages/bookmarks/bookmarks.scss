@@ -7,3 +7,13 @@
   display: flex;
   align-items: center;
 }
+
+// M3 icon-buttons ignore color="primary|warn" (no tint emitted), so tint
+// the glyphs explicitly with theme system colors.
+.row-actions .mat-primary mat-icon {
+  color: var(--mat-sys-primary);
+}
+
+.row-actions .mat-warn mat-icon {
+  color: var(--mat-sys-error);
+}
