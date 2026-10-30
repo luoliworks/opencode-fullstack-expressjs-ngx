@@ -2,7 +2,7 @@
 
 Full-stack CMS: an Express.js API in TypeScript (SQLite via `node:sqlite` + Drizzle ORM) with an Angular frontend. Serves the Angular production build when present, otherwise falls back to the static page in `public/`.
 
-> This project was generated with [OpenCode](https://opencode.ai).
+> This project was initially generated with [OpenCode](https://opencode.ai) and is now modified and maintained using **Google Antigravity** (powered by Claude Opus 5.5 and Gemini 4 Argon).
 
 ## Prerequisites
 

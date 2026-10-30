@@ -95,3 +95,33 @@ body {
   color: var(--mat-sys-on-surface-variant);
   text-transform: capitalize;
 }
+
+// ---------- Page header toolbar ----------
+// Shared layout for mat-card-header when pairing a title/subtitle on the left
+// with an action button on the right (and optional back-link above/below).
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding-bottom: 1rem;
+}
+
+.page-header-action {
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.back-link {
+  display: inline-block;
+  margin-top: 0.25rem;
+  color: var(--mat-sys-primary);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.875rem;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
