@@ -130,6 +130,19 @@ $ink: #1e1b4b;
 // ---------- Drawer (mobile) ----------
 .drawer {
   width: 280px;
+  border-radius: 0;
+  --mdc-list-list-item-container-shape: 0px;
+  --mat-list-active-indicator-shape: 0px;
+}
+
+.drawer .mat-mdc-list-item,
+.drawer .mat-mdc-list-item .mdc-list-item__content,
+.drawer .mat-mdc-list-item::before {
+  border-radius: 0 !important;
+}
+
+.drawer mat-divider {
+  margin-top: 0.5rem;
 }
 
 .drawer-header {
