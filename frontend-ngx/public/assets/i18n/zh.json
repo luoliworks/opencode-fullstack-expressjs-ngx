@@ -12,6 +12,11 @@
   },
   "nav": {
     "admin": "管理",
+    "browse": "浏览",
+    "account": "账户",
+    "dashboard": "控制台",
+    "home": "首页",
+    "closeMenu": "关闭菜单",
     "articles": "文章",
     "bookmarks": "收藏",
     "users": "用户",

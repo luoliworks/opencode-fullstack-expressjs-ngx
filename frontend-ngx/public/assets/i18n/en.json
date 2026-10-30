@@ -11,7 +11,12 @@
     "deleteFailed": "Delete failed."
   },
   "nav": {
-    "admin": "Manage",
+    "admin": "Admin",
+    "browse": "Browse",
+    "account": "Account",
+    "dashboard": "Dashboard",
+    "home": "Home",
+    "closeMenu": "Close menu",
     "articles": "Articles",
     "bookmarks": "Bookmarks",
     "users": "Users",

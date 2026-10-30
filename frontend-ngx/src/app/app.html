@@ -1,113 +1,240 @@
-<mat-toolbar color="primary">
-  <a class="brand" routerLink="/">Simple CMS</a>
-  <a
-    mat-button
-    class="desktop-only"
-    routerLink="/articles"
-    routerLinkActive="active-link"
-    [routerLinkActiveOptions]="{ exact: true }"
-  >{{ 'nav.articles' | translate }}</a>
-  <span class="spacer"></span>
-  <nav class="desktop-nav">
-    @if (auth.isLoggedIn()) {
-      <a
-        mat-button
-        routerLink="/bookmarks"
-        routerLinkActive="active-link"
-        [routerLinkActiveOptions]="{ exact: true }"
-      >{{ 'nav.bookmarks' | translate }}</a>
-      <button mat-button [matMenuTriggerFor]="manageMenu" [class.active-link]="isAdminSection()">
-        {{ 'nav.admin' | translate }}
+<mat-sidenav-container class="shell">
+  <!-- Mobile navigation drawer (slides in from the left, overlays content). -->
+  <mat-sidenav #drawer class="drawer" mode="over" position="start" autoFocus="false">
+    <div class="drawer-header">
+      <a class="brand" routerLink="/" (click)="closeDrawer()">
+        <mat-icon class="brand-icon">auto_stories</mat-icon>
+        <span>Simple CMS</span>
+      </a>
+      <button mat-icon-button (click)="closeDrawer()" [attr.aria-label]="'nav.closeMenu' | translate">
+        <mat-icon>close</mat-icon>
       </button>
-      <mat-menu #manageMenu="matMenu">
+    </div>
+
+    <mat-nav-list>
+      <div mat-subheader>{{ 'nav.browse' | translate }}</div>
+      <a
+        mat-list-item
+        routerLink="/"
+        routerLinkActive="drawer-active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        (click)="closeDrawer()"
+      >
+        <mat-icon matListItemIcon>home</mat-icon>
+        <span matListItemTitle>{{ 'nav.home' | translate }}</span>
+      </a>
+      <a
+        mat-list-item
+        routerLink="/articles"
+        routerLinkActive="drawer-active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        (click)="closeDrawer()"
+      >
+        <mat-icon matListItemIcon>article</mat-icon>
+        <span matListItemTitle>{{ 'nav.articles' | translate }}</span>
+      </a>
+      @if (auth.isLoggedIn()) {
         <a
-          mat-menu-item
+          mat-list-item
+          routerLink="/bookmarks"
+          routerLinkActive="drawer-active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          (click)="closeDrawer()"
+        >
+          <mat-icon matListItemIcon>bookmarks</mat-icon>
+          <span matListItemTitle>{{ 'nav.bookmarks' | translate }}</span>
+        </a>
+
+        <mat-divider />
+        <div mat-subheader>{{ 'nav.admin' | translate }}</div>
+        <a
+          mat-list-item
           routerLink="/admin"
-          routerLinkActive="active-link"
+          routerLinkActive="drawer-active"
           [routerLinkActiveOptions]="{ exact: true }"
+          (click)="closeDrawer()"
         >
-          <mat-icon>dashboard</mat-icon>
-          <span>{{ 'admin.title' | translate }}</span>
+          <mat-icon matListItemIcon>dashboard</mat-icon>
+          <span matListItemTitle>{{ 'nav.dashboard' | translate }}</span>
         </a>
-        <a
-          mat-menu-item
-          routerLink="/admin/articles"
-          routerLinkActive="active-link"
-          [routerLinkActiveOptions]="{ exact: true }"
-        >
-          <mat-icon>article</mat-icon>
-          <span>{{ 'admin.manageArticles' | translate }}</span>
-        </a>
-        @if (auth.currentUser()?.role === 'admin') {
+        @if (canEditArticles()) {
           <a
-            mat-menu-item
-            routerLink="/admin/users"
-            routerLinkActive="active-link"
+            mat-list-item
+            routerLink="/admin/articles"
+            routerLinkActive="drawer-active"
             [routerLinkActiveOptions]="{ exact: true }"
+            (click)="closeDrawer()"
           >
-            <mat-icon>group</mat-icon>
-            <span>{{ 'admin.manageUsers' | translate }}</span>
+            <mat-icon matListItemIcon>edit_note</mat-icon>
+            <span matListItemTitle>{{ 'admin.manageArticles' | translate }}</span>
           </a>
         }
-      </mat-menu>
+        @if (isAdmin()) {
+          <a
+            mat-list-item
+            routerLink="/admin/users"
+            routerLinkActive="drawer-active"
+            [routerLinkActiveOptions]="{ exact: true }"
+            (click)="closeDrawer()"
+          >
+            <mat-icon matListItemIcon>group</mat-icon>
+            <span matListItemTitle>{{ 'admin.manageUsers' | translate }}</span>
+          </a>
+        }
+
+        <mat-divider />
+        <div mat-subheader>{{ 'nav.account' | translate }}</div>
+        <div class="drawer-user">
+          <span class="avatar-circle">{{ userInitial() }}</span>
+          <div class="drawer-user-text">
+            <div class="drawer-user-name">{{ auth.currentUser()?.username }}</div>
+            <div class="drawer-user-role">{{ 'roles.' + role() | translate }}</div>
+          </div>
+        </div>
+        <a mat-list-item (click)="logout()">
+          <mat-icon matListItemIcon>logout</mat-icon>
+          <span matListItemTitle>{{ 'nav.logout' | translate }}</span>
+        </a>
+      } @else {
+        <mat-divider />
+        <a
+          mat-list-item
+          routerLink="/login"
+          routerLinkActive="drawer-active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          (click)="closeDrawer()"
+        >
+          <mat-icon matListItemIcon>login</mat-icon>
+          <span matListItemTitle>{{ 'nav.login' | translate }}</span>
+        </a>
+      }
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    <mat-toolbar class="topbar">
       <button
         mat-icon-button
-        class="avatar-btn"
-        [matMenuTriggerFor]="userMenu"
-        [attr.aria-label]="auth.currentUser()?.username"
+        class="mobile-only menu-btn"
+        (click)="drawer.toggle()"
+        [attr.aria-label]="'nav.menu' | translate"
       >
-        <span class="avatar-circle">{{ userInitial() }}</span>
+        <mat-icon>menu</mat-icon>
       </button>
-      <mat-menu #userMenu="matMenu">
-        <button mat-menu-item disabled>{{ auth.currentUser()?.username }}</button>
-        <button mat-menu-item (click)="auth.logout()">
-          <mat-icon>logout</mat-icon>
-          <span>{{ 'nav.logout' | translate }}</span>
-        </button>
+
+      <a class="brand" routerLink="/">
+        <mat-icon class="brand-icon">auto_stories</mat-icon>
+        <span>Simple CMS</span>
+      </a>
+
+      <!-- Desktop: all page links grouped right after the brand. -->
+      <nav class="desktop-nav">
+        <a
+          mat-button
+          routerLink="/articles"
+          routerLinkActive="active-link"
+          [routerLinkActiveOptions]="{ exact: true }"
+        >{{ 'nav.articles' | translate }}</a>
+        @if (auth.isLoggedIn()) {
+          <a
+            mat-button
+            routerLink="/bookmarks"
+            routerLinkActive="active-link"
+            [routerLinkActiveOptions]="{ exact: true }"
+          >{{ 'nav.bookmarks' | translate }}</a>
+          <button mat-button [matMenuTriggerFor]="adminMenu" [class.active-link]="isAdminSection()">
+            {{ 'nav.admin' | translate }}
+            <mat-icon iconPositionEnd>expand_more</mat-icon>
+          </button>
+          <mat-menu #adminMenu="matMenu">
+            <a
+              mat-menu-item
+              routerLink="/admin"
+              routerLinkActive="menu-active"
+              [routerLinkActiveOptions]="{ exact: true }"
+            >
+              <mat-icon>dashboard</mat-icon>
+              <span>{{ 'nav.dashboard' | translate }}</span>
+            </a>
+            @if (canEditArticles()) {
+              <a
+                mat-menu-item
+                routerLink="/admin/articles"
+                routerLinkActive="menu-active"
+                [routerLinkActiveOptions]="{ exact: true }"
+              >
+                <mat-icon>edit_note</mat-icon>
+                <span>{{ 'admin.manageArticles' | translate }}</span>
+              </a>
+            }
+            @if (isAdmin()) {
+              <a
+                mat-menu-item
+                routerLink="/admin/users"
+                routerLinkActive="menu-active"
+                [routerLinkActiveOptions]="{ exact: true }"
+              >
+                <mat-icon>group</mat-icon>
+                <span>{{ 'admin.manageUsers' | translate }}</span>
+              </a>
+            }
+          </mat-menu>
+        }
+      </nav>
+
+      <span class="spacer"></span>
+
+      <button
+        mat-icon-button
+        class="lang-btn"
+        [matMenuTriggerFor]="langMenu"
+        [attr.aria-label]="'nav.language' | translate"
+      >
+        <mat-icon>language</mat-icon>
+      </button>
+      <mat-menu #langMenu="matMenu">
+        @for (l of lang.available; track l.code) {
+          <button mat-menu-item (click)="lang.switch(l.code)">
+            <mat-icon>{{ lang.current() === l.code ? 'check' : '' }}</mat-icon>
+            <span>{{ l.label }}</span>
+          </button>
+        }
       </mat-menu>
-    } @else {
-      <a
-        mat-button
-        routerLink="/login"
-        routerLinkActive="active-link"
-        [routerLinkActiveOptions]="{ exact: true }"
-      >{{ 'nav.login' | translate }}</a>
-    }
-  </nav>
-  <button mat-icon-button [matMenuTriggerFor]="langMenu" [attr.aria-label]="'nav.language' | translate">
-    <mat-icon>language</mat-icon>
-  </button>
-  <mat-menu #langMenu="matMenu">
-    @for (l of lang.available; track l.code) {
-      <button mat-menu-item (click)="lang.switch(l.code)">
-        {{ l.label }}{{ lang.current() === l.code ? ' ✓' : '' }}
-      </button>
-    }
-  </mat-menu>
-  <button
-    mat-icon-button
-    class="mobile-only"
-    [matMenuTriggerFor]="navMenu"
-    [attr.aria-label]="'nav.menu' | translate"
-  >
-    <mat-icon>menu</mat-icon>
-  </button>
-  <mat-menu #navMenu="matMenu">
-    <a mat-menu-item routerLink="/articles">{{ 'nav.articles' | translate }}</a>
-    @if (auth.isLoggedIn()) {
-      <a mat-menu-item routerLink="/bookmarks">{{ 'nav.bookmarks' | translate }}</a>
-      <a mat-menu-item routerLink="/admin">{{ 'admin.title' | translate }}</a>
-      <a mat-menu-item routerLink="/admin/articles">{{ 'admin.manageArticles' | translate }}</a>
-      @if (auth.currentUser()?.role === 'admin') {
-        <a mat-menu-item routerLink="/admin/users">{{ 'admin.manageUsers' | translate }}</a>
+
+      @if (auth.isLoggedIn()) {
+        <button
+          class="user-chip"
+          type="button"
+          [matMenuTriggerFor]="userMenu"
+          [attr.aria-label]="auth.currentUser()?.username"
+        >
+          <span class="avatar-circle">{{ userInitial() }}</span>
+          <span class="user-name">{{ auth.currentUser()?.username }}</span>
+        </button>
+        <mat-menu #userMenu="matMenu" xPosition="before">
+          <div class="menu-user" (click)="$event.stopPropagation()">
+            <span class="avatar-circle">{{ userInitial() }}</span>
+            <div>
+              <div class="menu-user-name">{{ auth.currentUser()?.username }}</div>
+              <div class="menu-user-role">{{ 'roles.' + role() | translate }}</div>
+            </div>
+          </div>
+          <mat-divider />
+          <button mat-menu-item (click)="logout()">
+            <mat-icon>logout</mat-icon>
+            <span>{{ 'nav.logout' | translate }}</span>
+          </button>
+        </mat-menu>
+      } @else {
+        <a mat-button class="login-btn desktop-only" routerLink="/login">
+          <mat-icon>login</mat-icon>
+          {{ 'nav.login' | translate }}
+        </a>
       }
-      <button mat-menu-item disabled>{{ auth.currentUser()?.username }}</button>
-      <button mat-menu-item (click)="auth.logout()">{{ 'nav.logout' | translate }}</button>
-    } @else {
-      <a mat-menu-item routerLink="/login">{{ 'nav.login' | translate }}</a>
-    }
-  </mat-menu>
-</mat-toolbar>
-<main>
-  <router-outlet />
-</main>
+    </mat-toolbar>
+
+    <main>
+      <router-outlet />
+    </main>
+  </mat-sidenav-content>
+</mat-sidenav-container>

@@ -1,55 +1,189 @@
+// Brand palette for the top bar (indigo -> violet gradient, amber accent).
+$indigo: #4f46e5;
+$violet: #7c3aed;
+$amber: #fbbf24;
+$ink: #1e1b4b;
+
+:host {
+  display: block;
+  height: 100%;
+}
+
+// Full-height shell; content scrolls inside mat-sidenav-content so the
+// sticky toolbar stays pinned at the top.
+.shell {
+  height: 100%;
+  background: transparent;
+}
+
 .spacer {
   flex: 1 1 auto;
 }
 
+// ---------- Top bar ----------
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  gap: 0.25rem;
+  background: linear-gradient(90deg, $indigo 0%, $violet 100%);
+  color: #fff;
+  box-shadow: 0 2px 12px rgba(49, 46, 129, 0.35);
+}
+
 .brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-right: 1rem;
   color: inherit;
   text-decoration: none;
+  font-weight: 600;
+  font-size: 1.2rem;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
 }
 
-.user {
-  font-size: 0.85rem;
-  margin-right: 0.5rem;
+.brand-icon {
+  color: $amber;
 }
 
-// Brand bar: M3 leaves mat-toolbar pale by default, force the primary color.
-mat-toolbar {
-  background-color: var(--mat-sys-primary);
-  color: var(--mat-sys-on-primary);
+.desktop-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
 }
 
-// M3 buttons set their own label color (dark), ignoring the inherited
-// on-primary — pin toolbar button text to white explicitly.
-mat-toolbar .mat-mdc-button,
-mat-toolbar .mat-mdc-button .mdc-button__label {
-  color: var(--mat-sys-on-primary);
+// M3 buttons set their own (dark) label/icon colors — pin everything inside
+// the toolbar to white so it reads on the gradient.
+.topbar .mat-mdc-button,
+.topbar .mat-mdc-button .mdc-button__label,
+.topbar .mat-mdc-button mat-icon,
+.topbar .mat-mdc-icon-button,
+.topbar .mat-mdc-icon-button mat-icon {
+  color: #fff;
 }
 
-// Current section highlight (desktop buttons + open menu items).
-.active-link {
-  background-color: rgba(255, 255, 255, 0.16);
+.topbar .mat-mdc-button {
+  border-radius: 999px;
+  font-weight: 500;
+  opacity: 0.88;
+  transition:
+    opacity 120ms ease,
+    background-color 120ms ease;
+
+  &:hover {
+    opacity: 1;
+  }
 }
 
-// M3 leaves icon-button glyphs dark by default — unreadable on the blue bar.
-// (NOTE: there is no .mat-icon-button class on the host, only the attribute.)
-mat-toolbar > button mat-icon {
-  color: var(--mat-sys-on-primary);
+// Current section: frosted pill with an amber underline dot.
+.topbar .active-link {
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 0.18);
+  box-shadow: inset 0 -2px 0 $amber;
 }
 
-.avatar-btn {
+.login-btn {
+  border: 1px solid rgba(255, 255, 255, 0.6) !important;
+}
+
+// ---------- User chip (avatar + name) ----------
+.user-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
   margin-left: 0.25rem;
+  padding: 3px 12px 3px 3px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 120ms ease;
+
+  &:hover,
+  &:focus-visible {
+    background: rgba(255, 255, 255, 0.24);
+    outline: none;
+  }
 }
 
 .avatar-circle {
   display: inline-flex;
+  flex: none;
   align-items: center;
   justify-content: center;
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background-color: rgba(255, 255, 255, 0.24);
+  background-color: $amber;
+  color: $ink;
   font-size: 1rem;
-  font-weight: 500;
+  font-weight: 700;
+  line-height: 1;
+}
+
+// ---------- Drawer (mobile) ----------
+.drawer {
+  width: 280px;
+}
+
+.drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+  padding: 0 0.5rem 0 1rem;
+  background: linear-gradient(90deg, $indigo 0%, $violet 100%);
+  color: #fff;
+
+  .brand {
+    margin-right: 0;
+  }
+
+  .mat-mdc-icon-button,
+  .mat-mdc-icon-button mat-icon {
+    color: #fff;
+  }
+}
+
+.drawer [mat-subheader] {
+  color: $violet;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.72rem;
+}
+
+.drawer .drawer-active {
+  background-color: rgba(124, 58, 237, 0.12);
+
+  .mat-icon,
+  [matListItemTitle] {
+    color: $violet;
+    font-weight: 600;
+  }
+}
+
+.drawer-user {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 1rem;
+}
+
+.drawer-user-name {
+  font-weight: 600;
+}
+
+.drawer-user-role {
+  font-size: 0.8rem;
+  color: var(--mat-sys-on-surface-variant);
+  text-transform: capitalize;
 }
 
 main {
@@ -60,23 +194,24 @@ main {
   display: none;
 }
 
-// Narrow screens: hide the text buttons, show the hamburger instead.
+// Narrow screens: page links move into the drawer; keep brand, language
+// and avatar visible in the bar.
 @media (max-width: 719px) {
   .desktop-only,
-  .desktop-nav {
-    display: none;
-  }
-
-  // Brand hides too; the hamburger jumps to the far left via flex order
-  // (it sits after the spacer in the DOM, desktop order untouched).
-  .brand {
+  .desktop-nav,
+  .user-name {
     display: none;
   }
 
   .mobile-only {
     display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    order: -1;
+  }
+
+  .brand {
+    font-size: 1.1rem;
+  }
+
+  .user-chip {
+    padding: 3px;
   }
 }
