@@ -3,10 +3,23 @@
   margin: 3rem auto;
 }
 
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+
+  button[type='submit'] {
+    margin-top: 0.25rem;
+    height: 44px;
+    font-weight: 600;
+  }
+}
+
 .full-width {
   width: 100%;
 }
 
 .form-error {
+  margin: 0 0 0.75rem;
   color: var(--mat-sys-error, #b00020);
 }

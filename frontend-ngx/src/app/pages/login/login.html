@@ -8,14 +8,14 @@
   </mat-card>
 } @else {
   <mat-card class="auth-card">
-    <mat-card-header>
+    <mat-card-header class="page-header">
       <mat-card-title>{{ (setupMode() ? 'login.setupTitle' : 'login.title') | translate }}</mat-card-title>
       @if (setupMode()) {
         <mat-card-subtitle>{{ 'login.setupHint' | translate }}</mat-card-subtitle>
       }
     </mat-card-header>
     <mat-card-content>
-      <form (ngSubmit)="submit()">
+      <form class="auth-form" (ngSubmit)="submit()">
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>{{ 'login.username' | translate }}</mat-label>
           <input matInput [(ngModel)]="username" name="username" required autocomplete="username" />
