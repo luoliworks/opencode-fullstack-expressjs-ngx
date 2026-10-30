@@ -93,7 +93,11 @@
   "detail": {
     "notFound": "Article not found",
     "notFoundHint": "It may have been deleted or is not published yet.",
-    "backToArticles": "← Back to articles"
+    "backToArticles": "← Back to articles",
+    "publishedOn": "Published",
+    "updatedOn": "Updated",
+    "bookmark": "Bookmark",
+    "bookmarked": "Bookmarked"
   },
   "admin": {
     "title": "Admin",

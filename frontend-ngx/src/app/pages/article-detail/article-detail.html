@@ -4,23 +4,61 @@
       <p>{{ 'common.loading' | translate }}</p>
     </mat-card-content>
   } @else if (notFound() || !article()) {
-    <mat-card-header>
-      <mat-card-title>{{ 'detail.notFound' | translate }}</mat-card-title>
-      <mat-card-subtitle>{{ 'detail.notFoundHint' | translate }}</mat-card-subtitle>
-    </mat-card-header>
-    <mat-card-actions>
-      <a mat-button routerLink="/articles">{{ 'detail.backToArticles' | translate }}</a>
-    </mat-card-actions>
-  } @else {
-    <mat-card-header>
-      <mat-card-title>{{ article()!.title }}</mat-card-title>
-      <mat-card-subtitle>/a/{{ article()!.slug }}</mat-card-subtitle>
-    </mat-card-header>
     <mat-card-content>
-      <p class="content">{{ article()!.content }}</p>
+      <div class="empty-state">
+        <mat-icon>search_off</mat-icon>
+        <h2>{{ 'detail.notFound' | translate }}</h2>
+        <p>{{ 'detail.notFoundHint' | translate }}</p>
+        <a mat-stroked-button color="primary" routerLink="/articles">
+          {{ 'detail.backToArticles' | translate }}
+        </a>
+      </div>
     </mat-card-content>
-    <mat-card-actions>
-      <a mat-button routerLink="/articles">{{ 'detail.backToArticles' | translate }}</a>
-    </mat-card-actions>
+  } @else {
+    <div class="article-hero">
+      <div class="article-top-bar">
+        <a class="back-link" routerLink="/articles">{{ 'detail.backToArticles' | translate }}</a>
+
+        @if (auth.isLoggedIn()) {
+          <button
+            mat-stroked-button
+            class="bookmark-btn"
+            [class.bookmarked]="bookmarkId() !== null"
+            [disabled]="bookmarkBusy()"
+            (click)="toggleBookmark()"
+          >
+            <mat-icon>{{ bookmarkId() !== null ? 'bookmark_added' : 'bookmark_add' }}</mat-icon>
+            {{ (bookmarkId() !== null ? 'detail.bookmarked' : 'detail.bookmark') | translate }}
+          </button>
+        }
+      </div>
+
+      <h1 class="article-title">{{ article()!.title }}</h1>
+
+      <div class="article-meta">
+        <span class="meta-item">
+          <mat-icon>calendar_today</mat-icon>
+          {{ 'detail.publishedOn' | translate }} {{ article()!.createdAt | date: 'yyyy-MM-dd HH:mm' }}
+        </span>
+        @if (article()!.updatedAt && article()!.updatedAt !== article()!.createdAt) {
+          <span class="meta-dot">·</span>
+          <span class="meta-item">
+            {{ 'detail.updatedOn' | translate }} {{ article()!.updatedAt | date: 'yyyy-MM-dd HH:mm' }}
+          </span>
+        }
+        <span class="meta-dot">·</span>
+        <code class="slug-pill">/a/{{ article()!.slug }}</code>
+      </div>
+    </div>
+
+    <mat-card-content>
+      <div class="article-body">{{ article()!.content }}</div>
+
+      <div class="article-footer">
+        <a mat-stroked-button routerLink="/articles">
+          {{ 'detail.backToArticles' | translate }}
+        </a>
+      </div>
+    </mat-card-content>
   }
 </mat-card>
