@@ -5,6 +5,7 @@
       <a class="back-link" routerLink="/admin">{{ 'common.backToAdmin' | translate }}</a>
     </mat-card-subtitle>
     <button class="page-header-action" mat-flat-button color="primary" (click)="openCreate()">
+      <mat-icon>add</mat-icon>
       {{ 'users.create' | translate }}
     </button>
   </mat-card-header>
@@ -14,42 +15,88 @@
     } @else if (error()) {
       <p class="form-error">{{ error() }}</p>
     } @else {
-      <table mat-table [dataSource]="rows()" class="full-width">
-        <ng-container matColumnDef="username">
-          <th mat-header-cell *matHeaderCellDef>{{ 'users.colUsername' | translate }}</th>
-          <td mat-cell *matCellDef="let u">{{ u.username }}</td>
-        </ng-container>
-        <ng-container matColumnDef="email">
-          <th mat-header-cell *matHeaderCellDef>{{ 'users.colEmail' | translate }}</th>
-          <td mat-cell *matCellDef="let u">{{ u.email }}</td>
-        </ng-container>
-        <ng-container matColumnDef="displayName">
-          <th mat-header-cell *matHeaderCellDef>{{ 'users.colDisplayName' | translate }}</th>
-          <td mat-cell *matCellDef="let u">{{ u.displayName || '—' }}</td>
-        </ng-container>
-        <ng-container matColumnDef="role">
-          <th mat-header-cell *matHeaderCellDef>{{ 'users.colRole' | translate }}</th>
-          <td mat-cell *matCellDef="let u">{{ ('roles.' + u.role) | translate }}</td>
-        </ng-container>
-        <ng-container matColumnDef="createdAt">
-          <th mat-header-cell *matHeaderCellDef>{{ 'users.colCreated' | translate }}</th>
-          <td mat-cell *matCellDef="let u">{{ u.createdAt | date: 'yyyy-MM-dd' }}</td>
-        </ng-container>
-        <ng-container matColumnDef="actions">
-          <th mat-header-cell *matHeaderCellDef>{{ 'users.colActions' | translate }}</th>
-          <td mat-cell *matCellDef="let u">
-            <button mat-button (click)="openEdit(u)">{{ 'common.edit' | translate }}</button>
-            @if (pendingDeleteId() === u.id) {
-              <button mat-button color="warn" (click)="deleteUser(u.id)">{{ 'common.confirmDelete' | translate }}</button>
-              <button mat-button (click)="cancelDelete()">{{ 'common.cancel' | translate }}</button>
-            } @else {
-              <button mat-button color="warn" (click)="confirmDelete(u.id)">{{ 'common.delete' | translate }}</button>
-            }
-          </td>
-        </ng-container>
-        <tr mat-header-row *matHeaderRowDef="columns"></tr>
-        <tr mat-row *matRowDef="let row; columns: columns"></tr>
-      </table>
+      <div class="table-wrap">
+        <table mat-table [dataSource]="rows()" class="full-width admin-table">
+          <ng-container matColumnDef="username">
+            <th mat-header-cell *matHeaderCellDef>{{ 'users.colUsername' | translate }}</th>
+            <td mat-cell *matCellDef="let u">
+              <div class="user-cell">
+                <span class="user-avatar">{{ (u.displayName || u.username || '?')[0].toUpperCase() }}</span>
+                <span class="user-name">{{ u.username }}</span>
+              </div>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="email">
+            <th mat-header-cell *matHeaderCellDef>{{ 'users.colEmail' | translate }}</th>
+            <td mat-cell *matCellDef="let u">
+              <code class="email-pill">{{ u.email }}</code>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="displayName">
+            <th mat-header-cell *matHeaderCellDef>{{ 'users.colDisplayName' | translate }}</th>
+            <td mat-cell *matCellDef="let u" [class.muted-cell]="!u.displayName">
+              {{ u.displayName || '—' }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="role">
+            <th mat-header-cell *matHeaderCellDef>{{ 'users.colRole' | translate }}</th>
+            <td mat-cell *matCellDef="let u">
+              <span class="role-badge" [class]=" 'role-' + u.role ">
+                {{ ('roles.' + u.role) | translate }}
+              </span>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="createdAt">
+            <th mat-header-cell *matHeaderCellDef>{{ 'users.colCreated' | translate }}</th>
+            <td mat-cell *matCellDef="let u" class="muted-cell">
+              {{ u.createdAt | date: 'yyyy-MM-dd' }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef class="actions-col">{{ 'users.colActions' | translate }}</th>
+            <td mat-cell *matCellDef="let u" class="actions-col">
+              <div class="row-actions">
+                <button
+                  mat-icon-button
+                  color="primary"
+                  (click)="openEdit(u)"
+                  [attr.aria-label]="'common.edit' | translate"
+                >
+                  <mat-icon>edit</mat-icon>
+                </button>
+                @if (pendingDeleteId() === u.id) {
+                  <button
+                    mat-icon-button
+                    color="warn"
+                    (click)="deleteUser(u.id)"
+                    [attr.aria-label]="'common.confirmDelete' | translate"
+                  >
+                    <mat-icon>check</mat-icon>
+                  </button>
+                  <button
+                    mat-icon-button
+                    (click)="cancelDelete()"
+                    [attr.aria-label]="'common.cancel' | translate"
+                  >
+                    <mat-icon>close</mat-icon>
+                  </button>
+                } @else {
+                  <button
+                    mat-icon-button
+                    color="warn"
+                    (click)="confirmDelete(u.id)"
+                    [attr.aria-label]="'common.delete' | translate"
+                  >
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                }
+              </div>
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="columns"></tr>
+          <tr mat-row *matRowDef="let row; columns: columns"></tr>
+        </table>
+      </div>
     }
   </mat-card-content>
 </mat-card>

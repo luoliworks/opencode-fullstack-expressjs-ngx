@@ -3,6 +3,7 @@ import { DatePipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -14,7 +15,7 @@ import { UserDialog } from './user-dialog';
 
 @Component({
   selector: 'app-admin-users',
-  imports: [DatePipe, RouterLink, MatButtonModule, MatCardModule, MatDialogModule, MatTableModule, TranslatePipe],
+  imports: [DatePipe, RouterLink, MatButtonModule, MatCardModule, MatDialogModule, MatIconModule, MatTableModule, TranslatePipe],
   templateUrl: './admin-users.html',
   styleUrl: './admin-users.scss',
 })

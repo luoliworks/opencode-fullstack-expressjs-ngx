@@ -3,6 +3,7 @@ import { DatePipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
 import { MatPaginatorModule, type PageEvent } from '@angular/material/paginator';
 import { MatTableModule } from '@angular/material/table';
 import { RouterLink } from '@angular/router';
@@ -15,7 +16,7 @@ import { ArticleDialog } from './article-dialog';
 
 @Component({
   selector: 'app-admin-articles',
-  imports: [DatePipe, RouterLink, MatButtonModule, MatCardModule, MatDialogModule, MatPaginatorModule, MatTableModule, TranslatePipe],
+  imports: [DatePipe, RouterLink, MatButtonModule, MatCardModule, MatDialogModule, MatIconModule, MatPaginatorModule, MatTableModule, TranslatePipe],
   templateUrl: './admin-articles.html',
   styleUrl: './admin-articles.scss',
 })
