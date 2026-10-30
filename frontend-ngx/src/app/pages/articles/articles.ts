@@ -1,6 +1,7 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
+import { DatePipe } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
-import { MatListModule } from '@angular/material/list';
+import { MatIconModule } from '@angular/material/icon';
 import { MatPaginatorModule, type PageEvent } from '@angular/material/paginator';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -10,7 +11,7 @@ import { LanguageService } from '../../services/language.service';
 
 @Component({
   selector: 'app-articles',
-  imports: [MatCardModule, MatListModule, MatPaginatorModule, RouterLink, TranslatePipe],
+  imports: [DatePipe, MatCardModule, MatIconModule, MatPaginatorModule, RouterLink, TranslatePipe],
   templateUrl: './articles.html',
   styleUrl: './articles.scss',
 })
