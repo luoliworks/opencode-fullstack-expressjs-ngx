@@ -1,51 +1,163 @@
 <mat-card class="page-card">
-  <mat-card-header>
-    <mat-card-title>{{ 'home.title' | translate }}</mat-card-title>
-    <mat-card-subtitle>{{ 'home.subtitle' | translate }}</mat-card-subtitle>
-  </mat-card-header>
-  <mat-card-content>
-    <h3>{{ 'home.aboutTitle' | translate }}</h3>
-    <p>{{ 'home.aboutBody' | translate }}</p>
-    <div class="home-actions">
-      <a mat-flat-button color="primary" routerLink="/articles">{{ 'home.browseArticles' | translate }}</a>
-      <a mat-button routerLink="/login">{{ 'home.signIn' | translate }}</a>
+  <!-- Hero banner -->
+  <div class="hero">
+    <div class="hero-badge-row">
+      <span class="tech-chip">Express 5</span>
+      <span class="tech-chip">TypeScript</span>
+      <span class="tech-chip">SQLite + Drizzle</span>
+      <span class="tech-chip">Angular 22 + Material 3</span>
+      <span class="tech-chip accent">OpenCode + Google Antigravity</span>
     </div>
-    <h3>{{ 'home.apiTitle' | translate }}</h3>
-    <mat-list>
-      <mat-list-item>
-        <a matListItemTitle href="/api"><code>GET /api</code></a>
-        <span matListItemLine>{{ 'home.apiRoot' | translate }}</span>
-      </mat-list-item>
-      <mat-list-item>
-        <a matListItemTitle href="/api/hello"><code>GET /api/hello</code></a>
-        <span matListItemLine>{{ 'home.apiHello' | translate }}</span>
-      </mat-list-item>
-      <mat-list-item>
-        <a matListItemTitle href="/api/articles"><code>GET /api/articles</code></a>
-        <span matListItemLine>{{ 'home.apiArticles' | translate }}</span>
-      </mat-list-item>
-      <mat-list-item>
-        <span matListItemTitle><code>GET / POST /api/bookmarks</code></span>
-        <span matListItemLine>{{ 'home.apiBookmarks' | translate }}</span>
-      </mat-list-item>
-      <mat-list-item>
-        <span matListItemTitle><code>GET /api/users</code></span>
-        <span matListItemLine>{{ 'home.apiUsers' | translate }}</span>
-      </mat-list-item>
-      <mat-list-item>
-        <span matListItemTitle><code>POST /api/login</code></span>
-        <span matListItemLine>{{ 'home.apiLogin' | translate }}</span>
-      </mat-list-item>
-      <mat-list-item>
-        <a matListItemTitle href="/api/setup"><code>GET /api/setup</code></a>
-        <span matListItemLine>{{ 'home.apiSetup' | translate }}</span>
-      </mat-list-item>
-      <mat-list-item>
-        <a matListItemTitle href="/health"><code>GET /health</code></a>
-        <span matListItemLine>{{ 'home.apiHealth' | translate }}</span>
-      </mat-list-item>
-    </mat-list>
-    <h3>{{ 'home.liveTitle' | translate }}</h3>
+    <h1 class="hero-title">{{ 'home.title' | translate }}</h1>
+    <p class="hero-subtitle">{{ 'home.subtitle' | translate }}</p>
+    <p class="hero-body">{{ 'home.aboutBody' | translate }}</p>
+
+    <div class="home-actions">
+      <a mat-flat-button color="primary" routerLink="/articles">
+        <mat-icon>article</mat-icon>
+        {{ 'home.browseArticles' | translate }}
+      </a>
+      @if (auth.isLoggedIn()) {
+        <a mat-stroked-button routerLink="/admin">
+          <mat-icon>dashboard</mat-icon>
+          {{ 'home.openDashboard' | translate }}
+        </a>
+      } @else {
+        <a mat-stroked-button routerLink="/login">
+          <mat-icon>login</mat-icon>
+          {{ 'home.signIn' | translate }}
+        </a>
+      }
+    </div>
+  </div>
+
+  <mat-card-content>
+    <!-- Feature highlights -->
+    <div class="section-header">
+      <mat-icon>auto_awesome</mat-icon>
+      <h2>{{ 'home.highlightsTitle' | translate }}</h2>
+    </div>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <span class="feature-icon"><mat-icon>layers</mat-icon></span>
+        <div>
+          <h3>{{ 'home.featStackTitle' | translate }}</h3>
+          <p>{{ 'home.featStackDesc' | translate }}</p>
+        </div>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon"><mat-icon>storage</mat-icon></span>
+        <div>
+          <h3>{{ 'home.featDbTitle' | translate }}</h3>
+          <p>{{ 'home.featDbDesc' | translate }}</p>
+        </div>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon"><mat-icon>verified_user</mat-icon></span>
+        <div>
+          <h3>{{ 'home.featAuthTitle' | translate }}</h3>
+          <p>{{ 'home.featAuthDesc' | translate }}</p>
+        </div>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon"><mat-icon>bookmarks</mat-icon></span>
+        <div>
+          <h3>{{ 'home.featBookmarksTitle' | translate }}</h3>
+          <p>{{ 'home.featBookmarksDesc' | translate }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- REST API Endpoints -->
+    <div class="section-header">
+      <mat-icon>terminal</mat-icon>
+      <h2>{{ 'home.apiTitle' | translate }}</h2>
+    </div>
+    <div class="api-grid">
+      <a class="api-card" href="/api" target="_blank" rel="noopener">
+        <div class="api-top">
+          <span class="method-badge get">GET</span>
+          <code class="api-path">/api</code>
+          <mat-icon class="api-ext">open_in_new</mat-icon>
+        </div>
+        <p>{{ 'home.apiRoot' | translate }}</p>
+      </a>
+
+      <a class="api-card" href="/api/hello" target="_blank" rel="noopener">
+        <div class="api-top">
+          <span class="method-badge get">GET</span>
+          <code class="api-path">/api/hello</code>
+          <mat-icon class="api-ext">open_in_new</mat-icon>
+        </div>
+        <p>{{ 'home.apiHello' | translate }}</p>
+      </a>
+
+      <a class="api-card" href="/api/articles" target="_blank" rel="noopener">
+        <div class="api-top">
+          <span class="method-badge get">GET</span>
+          <span class="method-badge post">POST</span>
+          <code class="api-path">/api/articles</code>
+          <mat-icon class="api-ext">open_in_new</mat-icon>
+        </div>
+        <p>{{ 'home.apiArticles' | translate }}</p>
+      </a>
+
+      <div class="api-card">
+        <div class="api-top">
+          <span class="method-badge get">GET</span>
+          <span class="method-badge post">POST</span>
+          <code class="api-path">/api/bookmarks</code>
+        </div>
+        <p>{{ 'home.apiBookmarks' | translate }}</p>
+      </div>
+
+      <div class="api-card">
+        <div class="api-top">
+          <span class="method-badge get">GET</span>
+          <span class="method-badge post">POST</span>
+          <code class="api-path">/api/users</code>
+        </div>
+        <p>{{ 'home.apiUsers' | translate }}</p>
+      </div>
+
+      <div class="api-card">
+        <div class="api-top">
+          <span class="method-badge post">POST</span>
+          <code class="api-path">/api/login</code>
+        </div>
+        <p>{{ 'home.apiLogin' | translate }}</p>
+      </div>
+
+      <a class="api-card" href="/api/setup" target="_blank" rel="noopener">
+        <div class="api-top">
+          <span class="method-badge get">GET</span>
+          <code class="api-path">/api/setup</code>
+          <mat-icon class="api-ext">open_in_new</mat-icon>
+        </div>
+        <p>{{ 'home.apiSetup' | translate }}</p>
+      </a>
+
+      <a class="api-card" href="/health" target="_blank" rel="noopener">
+        <div class="api-top">
+          <span class="method-badge get">GET</span>
+          <code class="api-path">/health</code>
+          <mat-icon class="api-ext">open_in_new</mat-icon>
+        </div>
+        <p>{{ 'home.apiHealth' | translate }}</p>
+      </a>
+    </div>
+
+    <!-- Live check -->
+    <div class="section-header">
+      <mat-icon>monitor_heart</mat-icon>
+      <h2>{{ 'home.liveTitle' | translate }}</h2>
+      @if (health() !== null) {
+        <span class="live-pill" [class.ok]="healthOk()">
+          <span class="live-dot"></span>
+          {{ (healthOk() ? 'home.liveOnline' : 'home.liveFail') | translate }}
+        </span>
+      }
+    </div>
     @if (health() === null) {
       <p>{{ 'common.loading' | translate }}</p>
     } @else {
