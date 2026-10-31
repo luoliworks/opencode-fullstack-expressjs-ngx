@@ -175,6 +175,14 @@ articlesRouter.patch('/:id', requireAuth, requireRole('admin', 'editor'), (req: 
     content?: unknown;
     status?: unknown;
   };
+  if (title !== undefined && (typeof title !== 'string' || title.trim() === '')) {
+    res.status(400).json({ error: 'title is required' });
+    return;
+  }
+  if (slug !== undefined && (typeof slug !== 'string' || slug.trim() === '')) {
+    res.status(400).json({ error: 'slug is required' });
+    return;
+  }
   if (status !== undefined && status !== 'draft' && status !== 'published') {
     res.status(400).json({ error: "status must be 'draft' or 'published'" });
     return;
@@ -183,8 +191,8 @@ articlesRouter.patch('/:id', requireAuth, requireRole('admin', 'editor'), (req: 
     const row = db
       .update(articles)
       .set({
-        ...(typeof title === 'string' ? { title } : {}),
-        ...(typeof slug === 'string' ? { slug } : {}),
+        ...(typeof title === 'string' ? { title: title.trim() } : {}),
+        ...(typeof slug === 'string' ? { slug: slug.trim() } : {}),
         ...(typeof content === 'string' ? { content } : {}),
         ...(status === undefined ? {} : { status }),
         updatedAt: new Date(),
