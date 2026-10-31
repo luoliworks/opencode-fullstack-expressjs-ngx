@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -7,6 +7,7 @@ import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import type { Article } from '../../services/articles.service';
 import { ArticlesService } from '../../services/articles.service';
+import { AuthService } from '../../services/auth.service';
 import { LanguageService } from '../../services/language.service';
 import { stripMarkdown } from '../../utils/markdown';
 
@@ -18,8 +19,13 @@ import { stripMarkdown } from '../../utils/markdown';
 })
 export class Articles implements OnInit {
   private readonly articlesApi = inject(ArticlesService);
+  private readonly auth = inject(AuthService);
   private readonly lang = inject(LanguageService);
 
+  readonly canEdit = computed(() => {
+    const role = this.auth.currentUser()?.role;
+    return this.auth.isLoggedIn() && (role === 'admin' || role === 'editor');
+  });
   readonly articles = signal<Article[]>([]);
   readonly total = signal(0);
   readonly page = signal(1);
@@ -44,16 +50,22 @@ export class Articles implements OnInit {
     this.page.set(page);
     this.loading.set(true);
     this.loadError.set(null);
-    this.articlesApi.list({ page, pageSize: this.pageSize(), status: 'published' }).subscribe({
-      next: (res) => {
-        this.articles.set(res.items);
-        this.total.set(res.total);
-        this.loading.set(false);
-      },
-      error: () => {
-        this.loadError.set(this.lang.t('articlesList.loadFail'));
-        this.loading.set(false);
-      },
-    });
+    this.articlesApi
+      .list({
+        page,
+        pageSize: this.pageSize(),
+        ...(this.canEdit() ? {} : { status: 'published' }),
+      })
+      .subscribe({
+        next: (res) => {
+          this.articles.set(res.items);
+          this.total.set(res.total);
+          this.loading.set(false);
+        },
+        error: () => {
+          this.loadError.set(this.lang.t('articlesList.loadFail'));
+          this.loading.set(false);
+        },
+      });
   }
 }

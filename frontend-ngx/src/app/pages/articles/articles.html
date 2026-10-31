@@ -16,11 +16,17 @@
     } @else {
       <div class="article-feed">
         @for (a of articles(); track a.id) {
-          <a class="article-item" [routerLink]="['/a', a.slug]">
+          <a class="article-item" [class.is-draft]="a.status === 'draft'" [routerLink]="['/a', a.slug]">
             <div class="article-meta">
               <span class="article-date">{{ a.createdAt | date: 'yyyy-MM-dd' }}</span>
               <span class="meta-dot">·</span>
               <span class="article-slug">/a/{{ a.slug }}</span>
+              @if (canEdit() || a.status === 'draft') {
+                <span class="status-badge" [class.published]="a.status === 'published'">
+                  <span class="status-dot"></span>
+                  {{ ('status.' + a.status) | translate }}
+                </span>
+              }
               <mat-icon class="article-arrow">arrow_forward</mat-icon>
             </div>
             <h3 class="article-title">{{ a.title }}</h3>

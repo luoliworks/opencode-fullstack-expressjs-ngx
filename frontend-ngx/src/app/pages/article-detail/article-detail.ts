@@ -26,6 +26,10 @@ export class ArticleDetail implements OnInit {
   private readonly sanitizer = inject(DomSanitizer);
 
   readonly article = signal<Article | null>(null);
+  readonly canEdit = computed(() => {
+    const role = this.auth.currentUser()?.role;
+    return this.auth.isLoggedIn() && (role === 'admin' || role === 'editor');
+  });
   readonly renderedContent = computed<SafeHtml>(() =>
     this.sanitizer.bypassSecurityTrustHtml(renderMarkdown(this.article()?.content ?? '')),
   );
@@ -43,13 +47,12 @@ export class ArticleDetail implements OnInit {
     }
     this.articlesApi.getBySlug(slug).subscribe({
       next: (row) => {
-        // Drafts stay hidden on the public site even if the slug is known.
-        const pub = row.status === 'published' ? row : null;
-        this.article.set(pub);
-        this.notFound.set(!pub);
+        const visible = row.status === 'published' || this.canEdit() ? row : null;
+        this.article.set(visible);
+        this.notFound.set(!visible);
         this.loading.set(false);
-        if (pub && this.auth.isLoggedIn()) {
-          this.checkBookmark(`/a/${pub.slug}`);
+        if (visible && this.auth.isLoggedIn()) {
+          this.checkBookmark(`/a/${visible.slug}`);
         }
       },
       error: () => {

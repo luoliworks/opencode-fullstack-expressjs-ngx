@@ -58,6 +58,41 @@
   font-size: 0.75rem;
 }
 
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 1px 8px;
+  border-radius: 999px;
+  font-size: 0.74rem;
+  font-weight: 600;
+  text-transform: capitalize;
+  background: rgba(217, 119, 6, 0.14);
+  color: #b45309;
+
+  .status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #d97706;
+  }
+
+  &.published {
+    background: rgba(22, 163, 74, 0.12);
+    color: #15803d;
+
+    .status-dot {
+      background: #16a34a;
+    }
+  }
+}
+
+.article-item.is-draft {
+  border-style: dashed;
+  border-color: rgba(217, 119, 6, 0.45);
+  background: rgba(254, 243, 199, 0.18);
+}
+
 .article-arrow {
   margin-left: auto;
   font-size: 1.15rem;

@@ -48,6 +48,13 @@
         }
         <span class="meta-dot">·</span>
         <code class="slug-pill">/a/{{ article()!.slug }}</code>
+        @if (canEdit() || article()!.status === 'draft') {
+          <span class="meta-dot">·</span>
+          <span class="status-badge" [class.published]="article()!.status === 'published'">
+            <span class="status-dot"></span>
+            {{ ('status.' + article()!.status) | translate }}
+          </span>
+        }
       </div>
     </div>
 

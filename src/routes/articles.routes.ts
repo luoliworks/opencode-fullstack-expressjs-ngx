@@ -4,6 +4,7 @@ import { db } from '../db/index.js';
 import { articles } from '../db/schema.js';
 import { requireAuth } from '../middleware/requireAuth.js';
 import { requireRole } from '../middleware/requireRole.js';
+import { verifyToken } from '../utils/jwt.js';
 
 const articlesRouter: Router = Router();
 
@@ -15,13 +16,44 @@ function parseStatus(raw: unknown): ArticleStatus | undefined | null {
   return null;
 }
 
+// Drafts are only visible to authenticated editors and admins.
+function canViewDrafts(req: Request): boolean {
+  const header: string | undefined = req.header('Authorization');
+  if (header === undefined || !header.startsWith('Bearer ')) return false;
+  const payload = verifyToken(header.slice('Bearer '.length).trim());
+  if (payload === null) return false;
+  return payload.role === 'admin' || payload.role === 'editor';
+}
+
 // GET /api/articles
-// No params -> plain array (legacy shape, unchanged).
+// No params -> plain array (legacy shape; drafts hidden unless editor/admin).
 // ?page=&pageSize=[&status=] -> { items, total, page, pageSize }.
 articlesRouter.get('/', (req: Request, res: Response) => {
+  const privileged: boolean = canViewDrafts(req);
   const { page: rawPage, pageSize: rawSize, status: rawStatus } = req.query;
+  const status: ArticleStatus | undefined | null = parseStatus(rawStatus);
+  if (status === null) {
+    res.status(400).json({ error: "status must be 'draft' or 'published'" });
+    return;
+  }
+  if (status === 'draft' && !privileged) {
+    res.status(403).json({ error: 'Insufficient permissions' });
+    return;
+  }
+
+  const effectiveStatus: ArticleStatus | undefined = privileged ? status : 'published';
+
   if (rawPage === undefined && rawSize === undefined && rawStatus === undefined) {
-    res.json(db.select().from(articles).orderBy(desc(articles.createdAt), desc(articles.id)).all());
+    const rows =
+      effectiveStatus === undefined
+        ? db.select().from(articles).orderBy(desc(articles.createdAt), desc(articles.id)).all()
+        : db
+            .select()
+            .from(articles)
+            .where(eq(articles.status, effectiveStatus))
+            .orderBy(desc(articles.createdAt), desc(articles.id))
+            .all();
+    res.json(rows);
     return;
   }
   const page: number = Math.max(1, Number(rawPage ?? 1));
@@ -30,24 +62,26 @@ articlesRouter.get('/', (req: Request, res: Response) => {
     res.status(400).json({ error: 'page and pageSize must be positive integers' });
     return;
   }
-  const status: ArticleStatus | undefined | null = parseStatus(rawStatus);
-  if (status === null) {
-    res.status(400).json({ error: "status must be 'draft' or 'published'" });
-    return;
-  }
   const offset: number = (page - 1) * pageSize;
   const total: number =
-    status === undefined
+    effectiveStatus === undefined
       ? (db.select({ n: count() }).from(articles).get()?.n ?? 0)
-      : (db.select({ n: count() }).from(articles).where(eq(articles.status, status)).get()?.n ?? 0);
+      : (db.select({ n: count() }).from(articles).where(eq(articles.status, effectiveStatus)).get()?.n ?? 0);
   const items =
-    status === undefined
+    effectiveStatus === undefined
       ? db.select().from(articles).orderBy(desc(articles.createdAt), desc(articles.id)).limit(pageSize).offset(offset).all()
-      : db.select().from(articles).where(eq(articles.status, status)).orderBy(desc(articles.createdAt), desc(articles.id)).limit(pageSize).offset(offset).all();
+      : db
+          .select()
+          .from(articles)
+          .where(eq(articles.status, effectiveStatus))
+          .orderBy(desc(articles.createdAt), desc(articles.id))
+          .limit(pageSize)
+          .offset(offset)
+          .all();
   res.json({ items, total, page, pageSize });
 });
 
-// GET /api/articles/slug/:slug (public, for the detail page)
+// GET /api/articles/slug/:slug (public for published; drafts require editor/admin)
 articlesRouter.get('/slug/:slug', (req: Request, res: Response) => {
   const slug = req.params.slug;
   if (typeof slug !== 'string' || slug === '') {
@@ -55,14 +89,14 @@ articlesRouter.get('/slug/:slug', (req: Request, res: Response) => {
     return;
   }
   const row = db.select().from(articles).where(eq(articles.slug, slug)).get();
-  if (!row) {
+  if (!row || (row.status !== 'published' && !canViewDrafts(req))) {
     res.status(404).json({ error: 'Not found' });
     return;
   }
   res.json(row);
 });
 
-// GET /api/articles/:id
+// GET /api/articles/:id (public for published; drafts require editor/admin)
 articlesRouter.get('/:id', (req: Request, res: Response) => {
   const id: number = Number(req.params.id);
   if (!Number.isInteger(id)) {
@@ -70,7 +104,7 @@ articlesRouter.get('/:id', (req: Request, res: Response) => {
     return;
   }
   const row = db.select().from(articles).where(eq(articles.id, id)).get();
-  if (!row) {
+  if (!row || (row.status !== 'published' && !canViewDrafts(req))) {
     res.status(404).json({ error: 'Not found' });
     return;
   }
