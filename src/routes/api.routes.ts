@@ -29,7 +29,5 @@ apiRouter.use('/articles', articlesRouter);
 apiRouter.use('/bookmarks', bookmarksRouter);
 // Users CRUD: GET|POST /api/users, GET|PATCH|DELETE /api/users/:id
 apiRouter.use('/users', usersRouter);
-// Example for the future:
-// apiRouter.use('/users', usersRouter);
 
 export default apiRouter;

@@ -1,7 +1,7 @@
 {
   "name": "simple-cms",
   "version": "1.0.0",
-  "description": "",
+  "description": "Full-stack Content Management and Bookmarking System powered by Express 5, TypeScript, SQLite (Drizzle ORM), and Angular 22.",
   "main": "dist/index.js",
   "scripts": {
     "dev": "tsx watch src/index.ts",
