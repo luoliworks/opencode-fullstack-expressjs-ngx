@@ -24,6 +24,18 @@
     <mat-hint>{{ 'bookmarks.urlHint' | translate }}</mat-hint>
   </mat-form-field>
   <div style="height: 16px;"></div>
+  <mat-form-field appearance="outline" class="full-width" subscriptSizing="dynamic">
+    <mat-label>{{ 'bookmarks.tagLabel' | translate }}</mat-label>
+    <input
+      matInput
+      [(ngModel)]="tag"
+      name="tag"
+      autocomplete="off"
+      placeholder="default"
+    />
+    <mat-hint>{{ 'bookmarks.tagHint' | translate }}</mat-hint>
+  </mat-form-field>
+  <div style="height: 16px;"></div>
   <mat-form-field appearance="outline" class="full-width">
     <mat-label>{{ 'bookmarks.descriptionLabel' | translate }}</mat-label>
     <textarea matInput [(ngModel)]="description" name="description" rows="3"></textarea>

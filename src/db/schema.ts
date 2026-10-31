@@ -52,6 +52,7 @@ export const bookmarks = sqliteTable('bookmarks', {
   title: text('title').notNull(),
   url: text('url').notNull(),
   description: text('description').notNull().default(''),
+  tag: text('tag').notNull().default('default'),
   createdAt: integer('created_at', { mode: 'timestamp' })
     .notNull()
     .$defaultFn(() => new Date()),

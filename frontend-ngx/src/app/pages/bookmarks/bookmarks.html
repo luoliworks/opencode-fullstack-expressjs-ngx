@@ -8,6 +8,33 @@
     </button>
   </mat-card-header>
   <mat-card-content>
+    @if (tags().length > 0) {
+      <div class="tag-filter-bar" role="group" [attr.aria-label]="'bookmarks.filterByTag' | translate">
+        <span class="tag-filter-label">
+          <mat-icon>sell</mat-icon>
+          {{ 'bookmarks.filterByTag' | translate }}:
+        </span>
+        <button
+          type="button"
+          class="tag-pill"
+          [class.active]="selectedTag() === null"
+          (click)="selectTag(null)"
+        >
+          {{ 'bookmarks.allTags' | translate }}
+        </button>
+        @for (t of tags(); track t) {
+          <button
+            type="button"
+            class="tag-pill"
+            [class.active]="selectedTag() === t"
+            (click)="selectTag(t)"
+          >
+            #{{ t }}
+          </button>
+        }
+      </div>
+    }
+
     @if (loading()) {
       <p>{{ 'common.loading' | translate }}</p>
     } @else if (loadError()) {
@@ -37,7 +64,16 @@
                     <span>{{ b.title }}</span>
                   </a>
                 }
-                <span class="bookmark-url">{{ b.url }}</span>
+                <div class="bookmark-meta">
+                  <button
+                    type="button"
+                    class="bookmark-tag-badge"
+                    (click)="selectTag(b.tag || 'default')"
+                  >
+                    #{{ b.tag || 'default' }}
+                  </button>
+                  <span class="bookmark-url">{{ b.url }}</span>
+                </div>
               </div>
 
               <div class="row-actions">

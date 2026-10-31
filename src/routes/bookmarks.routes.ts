@@ -30,12 +30,23 @@ function parseId(raw: unknown): number | null {
   return Number.isInteger(id) ? id : null;
 }
 
+function normalizeTag(raw: unknown): string {
+  if (typeof raw !== 'string') return 'default';
+  const trimmed: string = raw.trim();
+  return trimmed === '' ? 'default' : trimmed;
+}
+
 // GET /api/bookmarks
-// No params -> plain array (legacy shape, unchanged).
-// ?page=&pageSize= -> { items, total, page, pageSize }.
+// No params -> plain array (legacy shape, unchanged; optional ?tag= filters).
+// ?page=&pageSize=[&tag=] -> { items, total, page, pageSize, tags }.
 bookmarksRouter.get('/', requireAuth, (req: Request, res: Response) => {
   const userId: number = req.auth!.sub;
-  const scope = eq(bookmarks.userId, userId);
+  const userScope = eq(bookmarks.userId, userId);
+  const rawTag: string | undefined =
+    typeof req.query.tag === 'string' && req.query.tag.trim() !== ''
+      ? req.query.tag.trim()
+      : undefined;
+  const scope = rawTag ? and(userScope, eq(bookmarks.tag, rawTag)) : userScope;
   const order = [desc(bookmarks.createdAt), desc(bookmarks.id)];
   const { page: rawPage, pageSize: rawSize } = req.query;
   if (rawPage === undefined && rawSize === undefined) {
@@ -51,16 +62,25 @@ bookmarksRouter.get('/', requireAuth, (req: Request, res: Response) => {
   const offset: number = (page - 1) * pageSize;
   const total: number = db.select({ n: count() }).from(bookmarks).where(scope).get()?.n ?? 0;
   const items = db.select().from(bookmarks).where(scope).orderBy(...order).limit(pageSize).offset(offset).all();
-  res.json({ items, total, page, pageSize });
+  const tagRows = db
+    .selectDistinct({ tag: bookmarks.tag })
+    .from(bookmarks)
+    .where(userScope)
+    .orderBy(bookmarks.tag)
+    .all();
+  const tags: string[] = tagRows.map((r) => r.tag);
+  res.json({ items, total, page, pageSize, tags });
 });
 
-// POST /api/bookmarks  { url, title?, description? }
+// POST /api/bookmarks  { url, title?, description?, tag? }
 // Title is optional — blank/missing titles fall back to the normalized URL.
+// Tag is optional — blank/missing tags fall back to 'default'.
 bookmarksRouter.post('/', requireAuth, (req: Request, res: Response) => {
-  const { title, url, description } = req.body as {
+  const { title, url, description, tag } = req.body as {
     title?: unknown;
     url?: unknown;
     description?: unknown;
+    tag?: unknown;
   };
   const normalized: string | null = normalizeUrl(url);
   if (normalized === null) {
@@ -74,13 +94,14 @@ bookmarksRouter.post('/', requireAuth, (req: Request, res: Response) => {
       title: typeof title === 'string' && title.trim() !== '' ? title.trim() : normalized,
       url: normalized,
       description: typeof description === 'string' ? description : '',
+      tag: normalizeTag(tag),
     })
     .returning()
     .get();
   res.status(201).json(row);
 });
 
-// PATCH /api/bookmarks/:id  { title?, url?, description? }
+// PATCH /api/bookmarks/:id  { title?, url?, description?, tag? }
 // A blank title falls back to the final (new or existing) URL.
 bookmarksRouter.patch('/:id', requireAuth, (req: Request, res: Response) => {
   const id: number | null = parseId(req.params.id);
@@ -88,10 +109,11 @@ bookmarksRouter.patch('/:id', requireAuth, (req: Request, res: Response) => {
     res.status(400).json({ error: 'Invalid id' });
     return;
   }
-  const { title, url, description } = req.body as {
+  const { title, url, description, tag } = req.body as {
     title?: unknown;
     url?: unknown;
     description?: unknown;
+    tag?: unknown;
   };
   let normalized: string | undefined;
   if (url !== undefined) {
@@ -120,6 +142,7 @@ bookmarksRouter.patch('/:id', requireAuth, (req: Request, res: Response) => {
         : { title: title.trim() !== '' ? title.trim() : finalUrl }),
       ...(normalized === undefined ? {} : { url: normalized }),
       ...(typeof description === 'string' ? { description } : {}),
+      ...(tag === undefined ? {} : { tag: normalizeTag(tag) }),
       updatedAt: new Date(),
     })
     .where(and(eq(bookmarks.id, id), eq(bookmarks.userId, req.auth!.sub)))

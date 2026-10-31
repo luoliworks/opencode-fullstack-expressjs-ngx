@@ -28,6 +28,7 @@ export class BookmarkDialog {
 
   title = '';
   url = '';
+  tag = 'default';
   description = '';
 
   constructor() {
@@ -35,6 +36,7 @@ export class BookmarkDialog {
     if (b) {
       this.title = b.title;
       this.url = b.url;
+      this.tag = b.tag || 'default';
       this.description = b.description;
     }
   }
@@ -47,12 +49,13 @@ export class BookmarkDialog {
     this.error.set(null);
     const title = this.title.trim();
     const url = this.url.trim();
+    const tag = this.tag.trim() || 'default';
     if (!url) {
       this.error.set(this.lang.t('bookmarks.errFill'));
       return;
     }
     this.busy.set(true);
-    const payload = { title, url, description: this.description };
+    const payload = { title, url, tag, description: this.description };
     const done = {
       next: () => this.ref.close(true),
       error: (err: unknown) => {

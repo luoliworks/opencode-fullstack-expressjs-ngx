@@ -1,0 +1,1 @@
+ALTER TABLE `bookmarks` ADD `tag` text DEFAULT 'default' NOT NULL;

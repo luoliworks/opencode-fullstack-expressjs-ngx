@@ -24,6 +24,8 @@ export class Bookmarks implements OnInit {
   private readonly lang = inject(LanguageService);
 
   readonly bookmarks = signal<Bookmark[]>([]);
+  readonly tags = signal<string[]>([]);
+  readonly selectedTag = signal<string | null>(null);
   readonly total = signal(0);
   readonly page = signal(1);
   readonly pageSize = signal(10);
@@ -32,6 +34,12 @@ export class Bookmarks implements OnInit {
   readonly pendingDeleteId = signal<number | null>(null);
 
   ngOnInit(): void {
+    this.load(1);
+  }
+
+  selectTag(tag: string | null): void {
+    if (this.selectedTag() === tag) return;
+    this.selectedTag.set(tag);
     this.load(1);
   }
 
@@ -78,16 +86,32 @@ export class Bookmarks implements OnInit {
     this.page.set(page);
     this.loading.set(true);
     this.loadError.set(null);
-    this.bookmarksApi.list({ page, pageSize: this.pageSize() }).subscribe({
-      next: (res) => {
-        this.bookmarks.set(res.items);
-        this.total.set(res.total);
-        this.loading.set(false);
-      },
-      error: (err: unknown) => {
-        this.loadError.set(apiError(err, 'bookmarks.loadFail'));
-        this.loading.set(false);
-      },
-    });
+    const activeTag = this.selectedTag();
+    this.bookmarksApi
+      .list({
+        page,
+        pageSize: this.pageSize(),
+        ...(activeTag ? { tag: activeTag } : {}),
+      })
+      .subscribe({
+        next: (res) => {
+          const availableTags =
+            res.tags ??
+            Array.from(new Set(res.items.map((item) => item.tag || 'default'))).sort();
+          this.tags.set(availableTags);
+          if (activeTag && !availableTags.includes(activeTag) && res.items.length === 0) {
+            this.selectedTag.set(null);
+            this.load(1);
+            return;
+          }
+          this.bookmarks.set(res.items);
+          this.total.set(res.total);
+          this.loading.set(false);
+        },
+        error: (err: unknown) => {
+          this.loadError.set(apiError(err, 'bookmarks.loadFail'));
+          this.loading.set(false);
+        },
+      });
   }
 }

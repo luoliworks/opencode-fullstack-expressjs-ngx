@@ -8,6 +8,7 @@ export interface Bookmark {
   title: string;
   url: string;
   description: string;
+  tag: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -17,23 +18,27 @@ export interface BookmarkPage {
   total: number;
   page: number;
   pageSize: number;
+  tags?: string[];
 }
 
 export interface BookmarkQuery {
   page: number;
   pageSize: number;
+  tag?: string;
 }
 
 export interface CreateBookmarkInput {
   title?: string;
   url: string;
   description?: string;
+  tag?: string;
 }
 
 export interface UpdateBookmarkInput {
   title?: string;
   url?: string;
   description?: string;
+  tag?: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -48,6 +53,9 @@ export class BookmarksService {
       page: String(query.page),
       pageSize: String(query.pageSize),
     };
+    if (query.tag && query.tag.trim() !== '') {
+      params['tag'] = query.tag.trim();
+    }
     return this.http.get<BookmarkPage>('/api/bookmarks', { params });
   }
 
