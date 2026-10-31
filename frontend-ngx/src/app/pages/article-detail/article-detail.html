@@ -52,7 +52,7 @@
     </div>
 
     <mat-card-content>
-      <div class="article-body">{{ article()!.content }}</div>
+      <div class="article-body markdown-body" [innerHTML]="renderedContent()"></div>
 
       <div class="article-footer">
         <a mat-stroked-button routerLink="/articles">

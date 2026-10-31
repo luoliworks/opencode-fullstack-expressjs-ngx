@@ -1,8 +1,10 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { TranslatePipe } from '@ngx-translate/core';
 import type { Bookmark } from '../../services/bookmarks.service';
@@ -10,9 +12,23 @@ import { BookmarksService } from '../../services/bookmarks.service';
 import { LanguageService } from '../../services/language.service';
 import { apiError } from '../../utils/api-error';
 
+export interface BookmarkDialogData {
+  bookmark: Bookmark | null;
+  tags?: string[];
+}
+
 @Component({
   selector: 'app-bookmark-dialog',
-  imports: [FormsModule, MatDialogModule, MatFormFieldModule, MatInputModule, MatButtonModule, TranslatePipe],
+  imports: [
+    FormsModule,
+    MatAutocompleteModule,
+    MatDialogModule,
+    MatFormFieldModule,
+    MatIconModule,
+    MatInputModule,
+    MatButtonModule,
+    TranslatePipe,
+  ],
   templateUrl: './bookmark-dialog.html',
   styleUrl: './bookmark-dialog.scss',
 })
@@ -20,8 +36,10 @@ export class BookmarkDialog {
   private readonly bookmarks = inject(BookmarksService);
   private readonly ref = inject(MatDialogRef<BookmarkDialog, boolean>);
   private readonly lang = inject(LanguageService);
-  // null = create mode, Bookmark = edit mode.
-  protected readonly data: Bookmark | null = inject(MAT_DIALOG_DATA);
+  private readonly rawData: BookmarkDialogData | Bookmark | null = inject(MAT_DIALOG_DATA);
+
+  protected readonly bookmark: Bookmark | null;
+  readonly allTags: string[];
 
   readonly error = signal<string | null>(null);
   readonly busy = signal(false);
@@ -32,7 +50,25 @@ export class BookmarkDialog {
   description = '';
 
   constructor() {
-    const b = this.data;
+    let b: Bookmark | null = null;
+    let passedTags: string[] = [];
+    if (this.rawData && typeof this.rawData === 'object' && 'bookmark' in this.rawData) {
+      b = this.rawData.bookmark;
+      passedTags = this.rawData.tags ?? [];
+    } else {
+      b = this.rawData as Bookmark | null;
+    }
+    this.bookmark = b;
+
+    const tagSet = new Set<string>(['default', ...passedTags]);
+    if (b?.tag) tagSet.add(b.tag);
+    this.allTags = [
+      'default',
+      ...Array.from(tagSet)
+        .filter((t) => t !== 'default')
+        .sort(),
+    ];
+
     if (b) {
       this.title = b.title;
       this.url = b.url;
@@ -42,7 +78,20 @@ export class BookmarkDialog {
   }
 
   get isEdit(): boolean {
-    return this.data !== null;
+    return this.bookmark !== null;
+  }
+
+  get filteredTags(): string[] {
+    const q = this.tag.trim().toLowerCase();
+    // Show all options when empty or when the input matches an existing tag exactly
+    if (!q || this.allTags.some((t) => t.toLowerCase() === q)) {
+      return this.allTags;
+    }
+    return this.allTags.filter((t) => t.toLowerCase().includes(q));
+  }
+
+  pickTag(t: string): void {
+    this.tag = t;
   }
 
   save(): void {
@@ -64,7 +113,7 @@ export class BookmarkDialog {
       },
     };
     if (this.isEdit) {
-      this.bookmarks.update((this.data as Bookmark).id, payload).subscribe(done);
+      this.bookmarks.update((this.bookmark as Bookmark).id, payload).subscribe(done);
     } else {
       this.bookmarks.create(payload).subscribe(done);
     }

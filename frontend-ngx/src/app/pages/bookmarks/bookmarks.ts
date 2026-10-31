@@ -53,14 +53,20 @@ export class Bookmarks implements OnInit {
   }
 
   openCreate(): void {
-    const ref = this.dialog.open(BookmarkDialog, { data: null, width: '520px' });
+    const ref = this.dialog.open(BookmarkDialog, {
+      data: { bookmark: null, tags: this.tags() },
+      width: '520px',
+    });
     ref.afterClosed().subscribe((saved: boolean) => {
       if (saved) this.load(1);
     });
   }
 
   openEdit(bookmark: Bookmark): void {
-    const ref = this.dialog.open(BookmarkDialog, { data: bookmark, width: '520px' });
+    const ref = this.dialog.open(BookmarkDialog, {
+      data: { bookmark, tags: this.tags() },
+      width: '520px',
+    });
     ref.afterClosed().subscribe((saved: boolean) => {
       if (saved) this.load(this.page());
     });

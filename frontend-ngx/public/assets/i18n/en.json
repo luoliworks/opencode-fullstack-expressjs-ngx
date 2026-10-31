@@ -91,6 +91,7 @@
     "urlHint": "Full URL opens a new tab; /a/xxx stays on this site.",
     "tagLabel": "Tag",
     "tagHint": "Defaults to 'default' when left empty.",
+    "existingTags": "Existing tags",
     "descriptionLabel": "Description (optional)",
     "errFill": "Enter a URL."
   },
@@ -150,7 +151,11 @@
     "dialogCreate": "New article",
     "slugLabel": "slug (unique URL id)",
     "slugHint": "Auto-generated from the title; edit freely. For Chinese-only titles, enter an English slug manually.",
-    "content": "Content",
+    "content": "Content (Markdown supported)",
+    "writeTab": "Write",
+    "previewTab": "Preview",
+    "markdownHint": "Supports Markdown (# headings, **bold**, `code`, lists, links, tables)",
+    "previewEmpty": "Nothing to preview yet.",
     "statusDraft": "draft (draft)",
     "statusPublished": "published (published)",
     "errFill": "Enter a title and a slug."

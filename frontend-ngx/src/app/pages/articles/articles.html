@@ -25,7 +25,7 @@
             </div>
             <h3 class="article-title">{{ a.title }}</h3>
             @if (a.content) {
-              <p class="article-excerpt">{{ a.content }}</p>
+              <p class="article-excerpt">{{ excerpt(a.content) }}</p>
             }
           </a>
         }

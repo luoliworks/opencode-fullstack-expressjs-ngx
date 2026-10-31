@@ -1,8 +1,10 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { DomSanitizer, type SafeHtml } from '@angular/platform-browser';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -10,6 +12,7 @@ import type { Article } from '../../services/articles.service';
 import { ArticlesService } from '../../services/articles.service';
 import { LanguageService } from '../../services/language.service';
 import { apiError } from '../../utils/api-error';
+import { renderMarkdown } from '../../utils/markdown';
 import { slugify } from '../../utils/slug';
 
 export interface ArticleDialogData {
@@ -18,7 +21,16 @@ export interface ArticleDialogData {
 
 @Component({
   selector: 'app-article-dialog',
-  imports: [FormsModule, MatDialogModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule, TranslatePipe],
+  imports: [
+    FormsModule,
+    MatDialogModule,
+    MatFormFieldModule,
+    MatIconModule,
+    MatInputModule,
+    MatSelectModule,
+    MatButtonModule,
+    TranslatePipe,
+  ],
   templateUrl: './article-dialog.html',
   styleUrl: './article-dialog.scss',
 })
@@ -27,9 +39,11 @@ export class ArticleDialog {
   private readonly ref = inject(MatDialogRef<ArticleDialog, boolean>);
   protected readonly data: ArticleDialogData = inject(MAT_DIALOG_DATA);
   private readonly lang = inject(LanguageService);
+  private readonly sanitizer = inject(DomSanitizer);
 
   readonly error = signal<string | null>(null);
   readonly busy = signal(false);
+  readonly previewMode = signal(false);
 
   title = '';
   slug = '';
@@ -49,6 +63,10 @@ export class ArticleDialog {
 
   get isEdit(): boolean {
     return this.data.article !== undefined;
+  }
+
+  get renderedPreview(): SafeHtml {
+    return this.sanitizer.bypassSecurityTrustHtml(renderMarkdown(this.content));
   }
 
   // Create mode only: derive slug from the title until the user edits it

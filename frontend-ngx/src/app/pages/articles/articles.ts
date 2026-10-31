@@ -8,6 +8,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import type { Article } from '../../services/articles.service';
 import { ArticlesService } from '../../services/articles.service';
 import { LanguageService } from '../../services/language.service';
+import { stripMarkdown } from '../../utils/markdown';
 
 @Component({
   selector: 'app-articles',
@@ -28,6 +29,10 @@ export class Articles implements OnInit {
 
   ngOnInit(): void {
     this.load(1);
+  }
+
+  excerpt(content: string): string {
+    return stripMarkdown(content);
   }
 
   onPage(event: PageEvent): void {

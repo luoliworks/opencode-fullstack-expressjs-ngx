@@ -32,9 +32,33 @@
       name="tag"
       autocomplete="off"
       placeholder="default"
+      [matAutocomplete]="tagAuto"
     />
+    <mat-autocomplete #tagAuto="matAutocomplete">
+      @for (t of filteredTags; track t) {
+        <mat-option [value]="t">#{{ t }}</mat-option>
+      }
+    </mat-autocomplete>
     <mat-hint>{{ 'bookmarks.tagHint' | translate }}</mat-hint>
   </mat-form-field>
+  @if (allTags.length > 0) {
+    <div class="quick-tags">
+      <span class="quick-tags-label">
+        <mat-icon>sell</mat-icon>
+        {{ 'bookmarks.existingTags' | translate }}:
+      </span>
+      @for (t of allTags; track t) {
+        <button
+          type="button"
+          class="quick-tag-pill"
+          [class.active]="tag.trim() === t"
+          (click)="pickTag(t)"
+        >
+          #{{ t }}
+        </button>
+      }
+    </div>
+  }
   <div style="height: 16px;"></div>
   <mat-form-field appearance="outline" class="full-width">
     <mat-label>{{ 'bookmarks.descriptionLabel' | translate }}</mat-label>

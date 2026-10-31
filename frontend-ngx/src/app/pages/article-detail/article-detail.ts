@@ -1,5 +1,6 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
+import { DomSanitizer, type SafeHtml } from '@angular/platform-browser';
 import { MatCardModule } from '@angular/material/card';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -9,6 +10,7 @@ import type { Article } from '../../services/articles.service';
 import { ArticlesService } from '../../services/articles.service';
 import { AuthService } from '../../services/auth.service';
 import { BookmarksService } from '../../services/bookmarks.service';
+import { renderMarkdown, stripMarkdown } from '../../utils/markdown';
 
 @Component({
   selector: 'app-article-detail',
@@ -21,8 +23,12 @@ export class ArticleDetail implements OnInit {
   private readonly articlesApi = inject(ArticlesService);
   private readonly bookmarksApi = inject(BookmarksService);
   private readonly route = inject(ActivatedRoute);
+  private readonly sanitizer = inject(DomSanitizer);
 
   readonly article = signal<Article | null>(null);
+  readonly renderedContent = computed<SafeHtml>(() =>
+    this.sanitizer.bypassSecurityTrustHtml(renderMarkdown(this.article()?.content ?? '')),
+  );
   readonly loading = signal(true);
   readonly notFound = signal(false);
   readonly bookmarkId = signal<number | null>(null);
@@ -71,7 +77,8 @@ export class ArticleDetail implements OnInit {
         .create({
           title: art.title,
           url: `/a/${art.slug}`,
-          description: art.content ? art.content.slice(0, 120) : '',
+          tag: 'article',
+          description: art.content ? stripMarkdown(art.content).slice(0, 120) : '',
         })
         .subscribe({
           next: (created) => {

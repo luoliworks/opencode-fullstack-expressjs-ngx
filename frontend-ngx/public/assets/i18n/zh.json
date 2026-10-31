@@ -92,6 +92,7 @@
     "urlHint": "完整 https 地址开新标签页，/a/xxx 站内打开。",
     "tagLabel": "标签",
     "tagHint": "留空时默认为 'default'。",
+    "existingTags": "已有标签",
     "descriptionLabel": "备注（可选）",
     "errFill": "请填写 URL。"
   },
@@ -151,7 +152,11 @@
     "dialogCreate": "新建文章",
     "slugLabel": "slug（链接唯一标识）",
     "slugHint": "根据标题自动生成，可手动修改；纯中文标题请手填英文 slug",
-    "content": "正文",
+    "content": "正文（支持 Markdown）",
+    "writeTab": "编写",
+    "previewTab": "预览",
+    "markdownHint": "支持 Markdown 语法（# 标题、**加粗**、`代码`、列表、链接、表格等）",
+    "previewEmpty": "暂无内容可预览。",
     "statusDraft": "draft（草稿）",
     "statusPublished": "published（已发布）",
     "errFill": "请填写标题和 slug。"

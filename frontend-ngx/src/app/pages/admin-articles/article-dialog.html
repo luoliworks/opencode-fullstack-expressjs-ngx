@@ -25,10 +25,43 @@
       <mat-hint>{{ 'articles.slugHint' | translate }}</mat-hint>
     }
   </mat-form-field>
-  <mat-form-field appearance="outline" class="full-width">
-    <mat-label>{{ 'articles.content' | translate }}</mat-label>
-    <textarea matInput [(ngModel)]="content" name="content" rows="6"></textarea>
-  </mat-form-field>
+  <div class="editor-toolbar">
+    <div class="editor-tabs">
+      <button
+        type="button"
+        class="editor-tab"
+        [class.active]="!previewMode()"
+        (click)="previewMode.set(false)"
+      >
+        <mat-icon>edit_note</mat-icon>
+        {{ 'articles.writeTab' | translate }}
+      </button>
+      <button
+        type="button"
+        class="editor-tab"
+        [class.active]="previewMode()"
+        (click)="previewMode.set(true)"
+      >
+        <mat-icon>visibility</mat-icon>
+        {{ 'articles.previewTab' | translate }}
+      </button>
+    </div>
+    <span class="markdown-hint">{{ 'articles.markdownHint' | translate }}</span>
+  </div>
+  @if (!previewMode()) {
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ 'articles.content' | translate }}</mat-label>
+      <textarea matInput [(ngModel)]="content" name="content" rows="8"></textarea>
+    </mat-form-field>
+  } @else {
+    <div class="markdown-preview-box">
+      @if (content.trim()) {
+        <div class="markdown-body" [innerHTML]="renderedPreview"></div>
+      } @else {
+        <p class="preview-empty">{{ 'articles.previewEmpty' | translate }}</p>
+      }
+    </div>
+  }
   <mat-form-field appearance="outline" class="full-width">
     <mat-label>{{ 'articles.colStatus' | translate }}</mat-label>
     <mat-select [(ngModel)]="status" name="status">
