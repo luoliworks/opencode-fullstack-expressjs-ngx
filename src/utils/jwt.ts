@@ -1,11 +1,42 @@
-import { createHmac, timingSafeEqual } from 'node:crypto';
+import { createHmac, randomBytes, timingSafeEqual } from 'node:crypto';
+import fs from 'node:fs';
+import path from 'node:path';
 
 // HS256 JWT implemented on Node's built-in crypto — no extra dependency.
 // Algorithm is hardcoded on verify, so there is no alg-confusion surface.
-const SECRET: string = process.env.JWT_SECRET ?? 'dev-only-insecure-secret';
-if (process.env.JWT_SECRET === undefined) {
-  console.warn('[auth] JWT_SECRET is not set — using an insecure dev fallback. Set JWT_SECRET in production.');
+function resolveSecret(): string {
+  const envSecret: string | undefined = process.env.JWT_SECRET?.trim();
+  if (envSecret) {
+    return envSecret;
+  }
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error('[auth] Fatal: JWT_SECRET environment variable must be set in production.');
+  }
+  const secretFile: string = path.join(__dirname, '..', '..', 'db', '.jwt-secret');
+  try {
+    if (fs.existsSync(secretFile)) {
+      const existing: string = fs.readFileSync(secretFile, 'utf8').trim();
+      if (existing.length >= 32) {
+        return existing;
+      }
+    }
+    fs.mkdirSync(path.dirname(secretFile), { recursive: true });
+    const generated: string = randomBytes(32).toString('hex');
+    fs.writeFileSync(secretFile, generated, { encoding: 'utf8', mode: 0o600 });
+    console.warn(
+      '[auth] JWT_SECRET is not set — generated a local 256-bit random secret in db/.jwt-secret. Set JWT_SECRET in production.',
+    );
+    return generated;
+  } catch {
+    const fallback: string = randomBytes(32).toString('hex');
+    console.warn(
+      '[auth] JWT_SECRET is not set — using an ephemeral 256-bit random secret for this process. Set JWT_SECRET in production.',
+    );
+    return fallback;
+  }
 }
+
+const SECRET: string = resolveSecret();
 
 const EXPIRES_IN_SEC: number = Number(process.env.JWT_EXPIRES_IN ?? 7 * 24 * 3600);
 
