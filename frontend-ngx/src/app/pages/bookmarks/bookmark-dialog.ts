@@ -15,6 +15,7 @@ import { apiError } from '../../utils/api-error';
 export interface BookmarkDialogData {
   bookmark: Bookmark | null;
   tags?: string[];
+  selectedTag?: string | null;
 }
 
 @Component({
@@ -52,9 +53,11 @@ export class BookmarkDialog {
   constructor() {
     let b: Bookmark | null = null;
     let passedTags: string[] = [];
+    let initialTag: string | null = null;
     if (this.rawData && typeof this.rawData === 'object' && 'bookmark' in this.rawData) {
       b = this.rawData.bookmark;
       passedTags = this.rawData.tags ?? [];
+      initialTag = this.rawData.selectedTag?.trim() || null;
     } else {
       b = this.rawData as Bookmark | null;
     }
@@ -62,6 +65,7 @@ export class BookmarkDialog {
 
     const tagSet = new Set<string>(['default', ...passedTags]);
     if (b?.tag) tagSet.add(b.tag);
+    if (initialTag) tagSet.add(initialTag);
     this.allTags = [
       'default',
       ...Array.from(tagSet)
@@ -74,6 +78,8 @@ export class BookmarkDialog {
       this.url = b.url;
       this.tag = b.tag || 'default';
       this.description = b.description;
+    } else if (initialTag) {
+      this.tag = initialTag;
     }
   }
 

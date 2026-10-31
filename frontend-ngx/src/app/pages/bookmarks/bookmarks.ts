@@ -54,7 +54,11 @@ export class Bookmarks implements OnInit {
 
   openCreate(): void {
     const ref = this.dialog.open(BookmarkDialog, {
-      data: { bookmark: null, tags: this.tags() },
+      data: {
+        bookmark: null,
+        tags: this.tags(),
+        selectedTag: this.selectedTag(),
+      },
       width: '520px',
     });
     ref.afterClosed().subscribe((saved: boolean) => {
