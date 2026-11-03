@@ -1,0 +1,49 @@
+<mat-card class="page-card">
+  <mat-card-header class="page-header">
+    <mat-card-title>{{ 'novels.title' | translate }}</mat-card-title>
+    <mat-card-subtitle>{{ 'novels.subtitle' | translate }}</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    @if (loading()) {
+      <p>{{ 'common.loading' | translate }}</p>
+    } @else if (loadError()) {
+      <p class="form-error">{{ loadError() }}</p>
+    } @else if (novels().length === 0) {
+      <div class="empty-state">
+        <mat-icon>headphones</mat-icon>
+        <p>{{ 'novels.empty' | translate }}</p>
+      </div>
+    } @else {
+      <div class="novel-grid">
+        @for (n of novels(); track n.name) {
+          <a class="novel-card" [routerLink]="['/novels', n.name]">
+            <div class="novel-icon">
+              <mat-icon>headphones</mat-icon>
+            </div>
+            <div class="novel-body">
+              <h3 class="novel-title">{{ n.name }}</h3>
+              <div class="novel-meta">
+                <span class="meta-pill">
+                  <mat-icon>queue_music</mat-icon>
+                  {{ 'novels.chapterCount' | translate: { count: n.chapterCount } }}
+                </span>
+                <span class="meta-size">{{ novelsApi.formatBytes(n.totalBytes) }}</span>
+              </div>
+              @if (progressFor(n.name); as prog) {
+                <div class="resume-badge">
+                  <mat-icon>play_circle</mat-icon>
+                  <span>
+                    {{ 'novels.lastPlayed' | translate }}:
+                    <strong>{{ chapterLabel(prog.filename) }}</strong>
+                    ({{ novelsApi.formatTime(prog.currentTime) }})
+                  </span>
+                </div>
+              }
+            </div>
+            <mat-icon class="novel-arrow">arrow_forward</mat-icon>
+          </a>
+        }
+      </div>
+    }
+  </mat-card-content>
+</mat-card>

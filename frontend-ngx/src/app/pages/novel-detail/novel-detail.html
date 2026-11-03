@@ -1,0 +1,190 @@
+<mat-card class="page-card">
+  @if (loading()) {
+    <mat-card-content>
+      <p>{{ 'common.loading' | translate }}</p>
+    </mat-card-content>
+  } @else if (loadError() || !novel()) {
+    <mat-card-content>
+      <div class="empty-state">
+        <mat-icon>error_outline</mat-icon>
+        <p class="form-error">{{ loadError() }}</p>
+        <a mat-stroked-button color="primary" routerLink="/novels">
+          {{ 'novels.backToNovels' | translate }}
+        </a>
+      </div>
+    </mat-card-content>
+  } @else {
+    <mat-card-header class="page-header">
+      <div>
+        <a class="back-link" routerLink="/novels">{{ 'novels.backToNovels' | translate }}</a>
+        <mat-card-title>{{ novel()!.name }}</mat-card-title>
+        <mat-card-subtitle>
+          {{ 'novels.chapterCount' | translate: { count: novel()!.chapterCount } }}
+          · {{ novelsApi.formatBytes(novel()!.totalBytes) }}
+        </mat-card-subtitle>
+      </div>
+    </mat-card-header>
+
+    <mat-card-content>
+      @if (novel()!.chapters.length === 0) {
+        <div class="empty-state">
+          <mat-icon>music_off</mat-icon>
+          <p>{{ 'novels.emptyChapters' | translate }}</p>
+        </div>
+      } @else {
+        <!-- Sticky / Featured Audio Player -->
+        <div class="player-panel">
+          <audio
+            #audioEl
+            [src]="audioSrc()"
+            preload="metadata"
+            (play)="isPlaying.set(true)"
+            (pause)="isPlaying.set(false)"
+            (loadedmetadata)="onLoadedMetadata()"
+            (timeupdate)="onTimeUpdate()"
+            (ended)="onEnded()"
+          ></audio>
+
+          <div class="player-top">
+            <div class="now-playing-badge" [class.playing]="isPlaying()">
+              <mat-icon>{{ isPlaying() ? 'graphic_eq' : 'headphones' }}</mat-icon>
+            </div>
+            <div class="now-playing-info">
+              <span class="now-playing-label">{{ 'novels.nowPlaying' | translate }}</span>
+              <h3 class="now-playing-title">
+                {{ currentChapter()?.title ?? '-' }}
+                <span class="now-playing-file">({{ currentChapter()?.filename }})</span>
+              </h3>
+            </div>
+            <button
+              type="button"
+              class="auto-next-pill"
+              [class.active]="autoNext()"
+              (click)="toggleAutoNext()"
+            >
+              <mat-icon>{{ autoNext() ? 'repeat_one_on' : 'repeat' }}</mat-icon>
+              {{ 'novels.autoNext' | translate }}
+            </button>
+          </div>
+
+          <div class="seek-row">
+            <span class="time-label">{{ novelsApi.formatTime(currentTime()) }}</span>
+            <input
+              type="range"
+              class="seek-slider"
+              min="0"
+              [max]="duration() || 100"
+              step="1"
+              [value]="currentTime()"
+              (input)="onSeek($event)"
+            />
+            <span class="time-label">{{ novelsApi.formatTime(duration()) }}</span>
+          </div>
+
+          <div class="controls-row">
+            <div class="transport-controls">
+              <button
+                mat-icon-button
+                (click)="prevChapter()"
+                [disabled]="!hasPrev()"
+                [attr.aria-label]="'novels.prevChapter' | translate"
+              >
+                <mat-icon>skip_previous</mat-icon>
+              </button>
+              <button
+                mat-icon-button
+                (click)="skip(-15)"
+                [attr.aria-label]="'novels.rewind15' | translate"
+              >
+                <mat-icon>replay_10</mat-icon>
+              </button>
+              <button
+                mat-fab
+                color="primary"
+                class="play-fab"
+                (click)="togglePlay()"
+                [attr.aria-label]="(isPlaying() ? 'novels.pause' : 'novels.play') | translate"
+              >
+                <mat-icon>{{ isPlaying() ? 'pause' : 'play_arrow' }}</mat-icon>
+              </button>
+              <button
+                mat-icon-button
+                (click)="skip(15)"
+                [attr.aria-label]="'novels.forward15' | translate"
+              >
+                <mat-icon>forward_10</mat-icon>
+              </button>
+              <button
+                mat-icon-button
+                (click)="nextChapter()"
+                [disabled]="!hasNext()"
+                [attr.aria-label]="'novels.nextChapter' | translate"
+              >
+                <mat-icon>skip_next</mat-icon>
+              </button>
+            </div>
+
+            <div class="speed-controls">
+              <span class="speed-label">{{ 'novels.speed' | translate }}:</span>
+              @for (s of speeds; track s) {
+                <button
+                  type="button"
+                  class="speed-pill"
+                  [class.active]="speed() === s"
+                  (click)="setSpeed(s)"
+                >
+                  {{ s }}x
+                </button>
+              }
+            </div>
+          </div>
+        </div>
+
+        <!-- Chapter Filter & List -->
+        <div class="chapters-toolbar">
+          <h3 class="chapters-heading">
+            {{ 'novels.chaptersHeading' | translate }}
+            <span class="chapters-count">({{ filteredChapters().length }})</span>
+          </h3>
+          @if (novel()!.chapters.length > 8) {
+            <div class="chapter-search">
+              <mat-icon>search</mat-icon>
+              <input
+                type="text"
+                [ngModel]="searchQuery()"
+                (ngModelChange)="searchQuery.set($event)"
+                [placeholder]="'novels.searchPlaceholder' | translate"
+              />
+            </div>
+          }
+        </div>
+
+        <div class="chapter-grid">
+          @for (ch of filteredChapters(); track ch.filename) {
+            <button
+              type="button"
+              class="chapter-card"
+              [class.active]="currentChapter()?.filename === ch.filename"
+              [class.playing]="currentChapter()?.filename === ch.filename && isPlaying()"
+              (click)="playChapter(ch)"
+            >
+              <mat-icon class="chapter-icon">
+                {{
+                  currentChapter()?.filename === ch.filename
+                    ? isPlaying()
+                      ? 'volume_up'
+                      : 'pause_circle'
+                    : 'play_circle'
+                }}
+              </mat-icon>
+              <div class="chapter-text">
+                <span class="chapter-title">{{ ch.title }}</span>
+                <span class="chapter-size">{{ novelsApi.formatBytes(ch.sizeBytes) }}</span>
+              </div>
+            </button>
+          }
+        </div>
+      }
+    </mat-card-content>
+  }
+</mat-card>

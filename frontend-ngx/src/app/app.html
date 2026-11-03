@@ -44,6 +44,15 @@
           <mat-icon matListItemIcon>bookmarks</mat-icon>
           <span matListItemTitle>{{ 'nav.bookmarks' | translate }}</span>
         </a>
+        <a
+          mat-list-item
+          routerLink="/novels"
+          routerLinkActive="drawer-active"
+          (click)="closeDrawer()"
+        >
+          <mat-icon matListItemIcon>headphones</mat-icon>
+          <span matListItemTitle>{{ 'nav.novels' | translate }}</span>
+        </a>
 
         <mat-divider />
         <div mat-subheader>{{ 'nav.admin' | translate }}</div>
@@ -142,6 +151,11 @@
             routerLinkActive="active-link"
             [routerLinkActiveOptions]="{ exact: true }"
           >{{ 'nav.bookmarks' | translate }}</a>
+          <a
+            mat-button
+            routerLink="/novels"
+            routerLinkActive="active-link"
+          >{{ 'nav.novels' | translate }}</a>
           <button mat-button [matMenuTriggerFor]="adminMenu" [class.active-link]="isAdminSection()">
             {{ 'nav.admin' | translate }}
             <mat-icon iconPositionEnd>expand_more</mat-icon>
