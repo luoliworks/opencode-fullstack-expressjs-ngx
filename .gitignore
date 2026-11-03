@@ -155,3 +155,7 @@ vite.config.ts.timestamp-*
 *.db-shm
 
 .jwt-secret
+
+# Local private audiobooks (keep only the placeholder AudioBooks.txt)
+mp3/*
+!mp3/AudioBooks.txt
