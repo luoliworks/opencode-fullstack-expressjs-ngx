@@ -56,25 +56,24 @@
             ></audio>
 
             <div class="player-top">
-              <div class="now-playing-badge" [class.playing]="isPlaying()">
-                <mat-icon>{{ isPlaying() ? 'graphic_eq' : 'headphones' }}</mat-icon>
+              <div class="player-status-row">
+                <span class="now-playing-label" [class.playing]="isPlaying()">
+                  <mat-icon>{{ isPlaying() ? 'graphic_eq' : 'headphones' }}</mat-icon>
+                  {{ 'novels.nowPlaying' | translate }}
+                </span>
+                <button
+                  type="button"
+                  class="auto-next-pill"
+                  [class.active]="autoNext()"
+                  (click)="toggleAutoNext()"
+                >
+                  <mat-icon>{{ autoNext() ? 'repeat_one_on' : 'repeat' }}</mat-icon>
+                  {{ 'novels.autoNext' | translate }}
+                </button>
               </div>
-              <div class="now-playing-info">
-                <span class="now-playing-label">{{ 'novels.nowPlaying' | translate }}</span>
-                <h3 class="now-playing-title">
-                  {{ currentChapter()?.title ?? '-' }}
-                  <span class="now-playing-file">({{ currentChapter()?.filename }})</span>
-                </h3>
-              </div>
-              <button
-                type="button"
-                class="auto-next-pill"
-                [class.active]="autoNext()"
-                (click)="toggleAutoNext()"
-              >
-                <mat-icon>{{ autoNext() ? 'repeat_one_on' : 'repeat' }}</mat-icon>
-                {{ 'novels.autoNext' | translate }}
-              </button>
+              <h3 class="now-playing-title" [title]="currentChapter()?.title ?? ''">
+                {{ currentChapter()?.title ?? '-' }}
+              </h3>
             </div>
 
             <div class="seek-row">
