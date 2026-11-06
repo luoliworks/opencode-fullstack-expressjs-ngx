@@ -3,7 +3,7 @@ set -e
 
 cd "$(dirname "$0")"
 
-# 1. 生成包含整个 192.168.2.x 网段的 req.cnf
+# 1. 生成包含 192.168.2.x 和 192.168.8.x 网段的 req.cnf
 cat > req.cnf <<EOF
 [req]
 distinguished_name = req_distinguished_name
@@ -31,9 +31,18 @@ DNS.3 = localhost
 IP.1 = 127.0.0.1
 EOF
 
+idx=2
+
 # 追加 192.168.2.1 到 192.168.2.254
 for i in $(seq 1 254); do
-  echo "IP.$((i + 1)) = 192.168.2.$i" >> req.cnf
+  echo "IP.$idx = 192.168.2.$i" >> req.cnf
+  idx=$((idx + 1))
+done
+
+# 追加 192.168.8.1 到 192.168.8.254
+for i in $(seq 1 254); do
+  echo "IP.$idx = 192.168.8.$i" >> req.cnf
+  idx=$((idx + 1))
 done
 
 # 2. 生成证书和私钥
