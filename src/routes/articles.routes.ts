@@ -2,9 +2,8 @@ import { Router, type Request, type Response } from 'express';
 import { count, desc, eq } from 'drizzle-orm';
 import { db } from '../db/index.js';
 import { articles } from '../db/schema.js';
-import { requireAuth } from '../middleware/requireAuth.js';
+import { optionalAuth, requireAuth } from '../middleware/requireAuth.js';
 import { requireRole } from '../middleware/requireRole.js';
-import { verifyToken } from '../utils/jwt.js';
 
 const articlesRouter: Router = Router();
 
@@ -18,11 +17,8 @@ function parseStatus(raw: unknown): ArticleStatus | undefined | null {
 
 // Drafts are only visible to authenticated editors and admins.
 function canViewDrafts(req: Request): boolean {
-  const header: string | undefined = req.header('Authorization');
-  if (header === undefined || !header.startsWith('Bearer ')) return false;
-  const payload = verifyToken(header.slice('Bearer '.length).trim());
-  if (payload === null) return false;
-  return payload.role === 'admin' || payload.role === 'editor';
+  const auth = optionalAuth(req);
+  return auth !== null && (auth.role === 'admin' || auth.role === 'editor');
 }
 
 // GET /api/articles

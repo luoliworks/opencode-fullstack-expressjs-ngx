@@ -1,8 +1,9 @@
-import { Router, type NextFunction, type Request, type Response } from 'express';
+import { Router, type Request, type Response } from 'express';
 import fs from 'node:fs';
 import path from 'node:path';
-import { requireAuth } from '../middleware/requireAuth.js';
-import { verifyToken } from '../utils/jwt.js';
+// requireStreamAuth accepts `Authorization: Bearer <token>` or `?token=<jwt>` so HTML5 <audio>
+// elements can stream and seek with Range requests while remaining protected.
+import { requireAuth, requireStreamAuth } from '../middleware/requireAuth.js';
 
 const novelsRouter: Router = Router();
 
@@ -18,29 +19,6 @@ function resolveSafeChild(parentDir: string, segment: string): string | null {
   const parentResolved: string = path.resolve(parentDir);
   if (!resolved.startsWith(parentResolved + path.sep)) return null;
   return resolved;
-}
-
-// Allows either `Authorization: Bearer <token>` or `?token=<jwt>` so HTML5 <audio>
-// elements can stream and seek with Range requests while remaining protected.
-function requireStreamAuth(req: Request, res: Response, next: NextFunction): void {
-  const header: string | undefined = req.header('Authorization');
-  let rawToken: string | undefined;
-  if (header && header.startsWith('Bearer ')) {
-    rawToken = header.slice('Bearer '.length).trim();
-  } else if (typeof req.query.token === 'string' && req.query.token.trim() !== '') {
-    rawToken = req.query.token.trim();
-  }
-  if (!rawToken) {
-    res.status(401).json({ error: 'Authentication required' });
-    return;
-  }
-  const payload = verifyToken(rawToken);
-  if (payload === null) {
-    res.status(401).json({ error: 'Invalid or expired token' });
-    return;
-  }
-  req.auth = { sub: payload.sub, username: payload.username, role: payload.role };
-  next();
 }
 
 function isAudioFile(name: string): boolean {

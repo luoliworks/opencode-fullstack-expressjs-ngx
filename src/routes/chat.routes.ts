@@ -1,6 +1,6 @@
-import { Router, type NextFunction, type Request, type Response } from 'express';
-import { requireAuth } from '../middleware/requireAuth.js';
-import { verifyToken } from '../utils/jwt.js';
+import { Router, type Request, type Response } from 'express';
+// requireStreamAuth accepts `Authorization: Bearer <token>` or `?token=<jwt>` for EventSource SSE.
+import { requireAuth, requireStreamAuth } from '../middleware/requireAuth.js';
 
 export interface ChatMessage {
   id: number;
@@ -41,28 +41,6 @@ function broadcastEvent(event: string, payload: unknown): void {
       clients.delete(client);
     }
   }
-}
-
-// Allows either `Authorization: Bearer <token>` or `?token=<jwt>` for EventSource SSE.
-function requireStreamAuth(req: Request, res: Response, next: NextFunction): void {
-  const header: string | undefined = req.header('Authorization');
-  let rawToken: string | undefined;
-  if (header && header.startsWith('Bearer ')) {
-    rawToken = header.slice('Bearer '.length).trim();
-  } else if (typeof req.query.token === 'string' && req.query.token.trim() !== '') {
-    rawToken = req.query.token.trim();
-  }
-  if (!rawToken) {
-    res.status(401).json({ error: 'Authentication required' });
-    return;
-  }
-  const payload = verifyToken(rawToken);
-  if (payload === null) {
-    res.status(401).json({ error: 'Invalid or expired token' });
-    return;
-  }
-  req.auth = { sub: payload.sub, username: payload.username, role: payload.role };
-  next();
 }
 
 const chatRouter: Router = Router();
