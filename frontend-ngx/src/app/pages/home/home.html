@@ -2,10 +2,11 @@
   <!-- Hero banner -->
   <div class="hero">
     <div class="hero-badge-row">
-      <span class="tech-chip">Express 5</span>
+      <span class="tech-chip">Express 5 (HTTP + HTTPS)</span>
       <span class="tech-chip">TypeScript</span>
       <span class="tech-chip">SQLite + Drizzle</span>
       <span class="tech-chip">Angular 22 + Material 3</span>
+      <span class="tech-chip">SSE + Web Notifications</span>
       <span class="tech-chip accent">OpenCode + Google Antigravity</span>
     </div>
     <h1 class="hero-title">{{ 'home.title' | translate }}</h1>
@@ -18,6 +19,14 @@
         {{ 'home.browseArticles' | translate }}
       </a>
       @if (auth.isLoggedIn()) {
+        <a mat-stroked-button routerLink="/novels">
+          <mat-icon>headphones</mat-icon>
+          {{ 'nav.novels' | translate }}
+        </a>
+        <a mat-stroked-button routerLink="/chat">
+          <mat-icon>forum</mat-icon>
+          {{ 'nav.chat' | translate }}
+        </a>
         <a mat-stroked-button routerLink="/admin">
           <mat-icon>dashboard</mat-icon>
           {{ 'home.openDashboard' | translate }}
@@ -66,6 +75,20 @@
           <p>{{ 'home.featBookmarksDesc' | translate }}</p>
         </div>
       </div>
+      <div class="feature-card">
+        <span class="feature-icon"><mat-icon>headphones</mat-icon></span>
+        <div>
+          <h3>{{ 'home.featNovelsTitle' | translate }}</h3>
+          <p>{{ 'home.featNovelsDesc' | translate }}</p>
+        </div>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon"><mat-icon>forum</mat-icon></span>
+        <div>
+          <h3>{{ 'home.featChatTitle' | translate }}</h3>
+          <p>{{ 'home.featChatDesc' | translate }}</p>
+        </div>
+      </div>
     </div>
 
     <!-- REST API Endpoints -->
@@ -109,6 +132,23 @@
           <code class="api-path">/api/bookmarks</code>
         </div>
         <p>{{ 'home.apiBookmarks' | translate }}</p>
+      </div>
+
+      <div class="api-card">
+        <div class="api-top">
+          <span class="method-badge get">GET</span>
+          <code class="api-path">/api/novels</code>
+        </div>
+        <p>{{ 'home.apiNovels' | translate }}</p>
+      </div>
+
+      <div class="api-card">
+        <div class="api-top">
+          <span class="method-badge get">GET</span>
+          <span class="method-badge post">POST</span>
+          <code class="api-path">/api/chat</code>
+        </div>
+        <p>{{ 'home.apiChat' | translate }}</p>
       </div>
 
       <div class="api-card">
