@@ -173,6 +173,7 @@ export function renderMarkdown(source: string): string {
       while (i < lines.length && /^\s*\d+\.\s+/.test(lines[i])) {
         const itemText = lines[i].replace(/^\s*\d+\.\s+/, '');
         items.push(`<li>${parseInline(itemText)}</li>`);
+        i++;
       }
       out.push(`<ol>${items.join('')}</ol>`);
       continue;
