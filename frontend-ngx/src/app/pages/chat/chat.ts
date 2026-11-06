@@ -22,6 +22,8 @@ export interface MessageSegment {
   value: string;
 }
 
+const NOTIFY_PREF_KEY = 'cms_chat_notify';
+
 @Component({
   selector: 'app-chat',
   standalone: true,
@@ -49,19 +51,115 @@ export class Chat implements OnInit, OnDestroy {
   readonly sending = signal(false);
   readonly copiedId = signal<number | null>(null);
 
+  readonly notifySupported = signal(false);
+  readonly notifyPermission = signal<NotificationPermission>('default');
+  readonly notifyEnabled = signal(false);
+  readonly notifyNotice = signal<string | null>(null);
+
   draftText = '';
 
   private eventSource: EventSource | null = null;
   private copyTimer: ReturnType<typeof setTimeout> | null = null;
+  private noticeTimer: ReturnType<typeof setTimeout> | null = null;
 
   ngOnInit(): void {
+    this.initNotificationState();
     this.connectStream();
   }
 
   ngOnDestroy(): void {
     this.closeStream();
-    if (this.copyTimer) {
-      clearTimeout(this.copyTimer);
+    if (this.copyTimer) clearTimeout(this.copyTimer);
+    if (this.noticeTimer) clearTimeout(this.noticeTimer);
+  }
+
+  private initNotificationState(): void {
+    const supported =
+      typeof window !== 'undefined' &&
+      'Notification' in window &&
+      window.isSecureContext;
+    this.notifySupported.set(supported);
+    if (!supported) return;
+
+    const perm = Notification.permission;
+    this.notifyPermission.set(perm);
+    const savedPref = localStorage.getItem(NOTIFY_PREF_KEY);
+    this.notifyEnabled.set(perm === 'granted' && savedPref !== '0');
+  }
+
+  async toggleNotifications(): Promise<void> {
+    if (!this.notifySupported()) {
+      this.showNotice('chat.notifyNeedsHttps');
+      return;
+    }
+
+    const currentPerm = Notification.permission;
+    this.notifyPermission.set(currentPerm);
+
+    if (currentPerm === 'denied') {
+      this.showNotice('chat.notifyBlocked');
+      return;
+    }
+
+    if (currentPerm === 'default') {
+      try {
+        const result = await Notification.requestPermission();
+        this.zone.run(() => {
+          this.notifyPermission.set(result);
+          if (result === 'granted') {
+            this.notifyEnabled.set(true);
+            localStorage.setItem(NOTIFY_PREF_KEY, '1');
+          } else if (result === 'denied') {
+            this.showNotice('chat.notifyBlocked');
+          }
+        });
+      } catch {
+        this.showNotice('chat.notifyNeedsHttps');
+      }
+      return;
+    }
+
+    // Permission is already 'granted' -> toggle mute/unmute
+    const next = !this.notifyEnabled();
+    this.notifyEnabled.set(next);
+    localStorage.setItem(NOTIFY_PREF_KEY, next ? '1' : '0');
+  }
+
+  private showNotice(key: string): void {
+    this.notifyNotice.set(key);
+    if (this.noticeTimer) clearTimeout(this.noticeTimer);
+    this.noticeTimer = setTimeout(() => {
+      this.notifyNotice.set(null);
+    }, 4500);
+  }
+
+  private maybeNotifyIncomingMessage(msg: ChatMessage): void {
+    if (this.isMine(msg)) return;
+    if (!this.notifySupported() || !this.notifyEnabled()) return;
+    if (Notification.permission !== 'granted') return;
+
+    // Trigger system notification when tab is in the background or window is unfocused
+    const isBackground = document.hidden || !document.hasFocus();
+    if (!isBackground) return;
+
+    const title = `${msg.username} · Simple CMS`;
+    const options: NotificationOptions = {
+      body: msg.text,
+      icon: '/favicon.ico?v=2',
+      tag: `cms-chat-${msg.id}`,
+    };
+
+    try {
+      const n = new Notification(title, options);
+      n.onclick = () => {
+        window.focus();
+        n.close();
+      };
+    } catch {
+      // Fallback for mobile browsers that require ServiceWorker registration
+      navigator.serviceWorker?.ready
+        .then((reg) => reg.showNotification(title, options))
+        .catch(() => {});
     }
   }
 
@@ -102,11 +200,16 @@ export class Chat implements OnInit, OnDestroy {
       this.zone.run(() => {
         try {
           const msg = JSON.parse(e.data) as ChatMessage;
+          let isNew = false;
           this.messages.update((prev) => {
             if (prev.some((m) => m.id === msg.id)) return prev;
+            isNew = true;
             return [...prev, msg];
           });
-          this.scrollToBottom();
+          if (isNew) {
+            this.scrollToBottom();
+            this.maybeNotifyIncomingMessage(msg);
+          }
         } catch {
           // ignore
         }

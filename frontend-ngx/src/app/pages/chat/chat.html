@@ -16,19 +16,40 @@
           <span class="user-pill">{{ u }}</span>
         }
       </div>
+      @if (notifyNotice()) {
+        <div class="notify-notice">
+          <mat-icon>info</mat-icon>
+          <span>{{ notifyNotice()! | translate }}</span>
+        </div>
+      }
     </div>
 
-    @if (messages().length > 0) {
+    <div class="chat-header-actions">
       <button
         mat-stroked-button
         type="button"
-        class="clear-btn"
-        (click)="clearLobby()"
+        class="notify-btn"
+        [class.active]="notifyEnabled()"
+        (click)="toggleNotifications()"
       >
-        <mat-icon>delete_sweep</mat-icon>
-        {{ 'chat.clear' | translate }}
+        <mat-icon>{{ notifyEnabled() ? 'notifications_active' : 'notifications_none' }}</mat-icon>
+        <span>
+          {{ (notifyEnabled() ? 'chat.notifyOn' : 'chat.notifyOff') | translate }}
+        </span>
       </button>
-    }
+
+      @if (messages().length > 0) {
+        <button
+          mat-stroked-button
+          type="button"
+          class="clear-btn"
+          (click)="clearLobby()"
+        >
+          <mat-icon>delete_sweep</mat-icon>
+          {{ 'chat.clear' | translate }}
+        </button>
+      }
+    </div>
   </div>
 
   <!-- Message feed -->
