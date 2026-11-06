@@ -159,3 +159,8 @@ vite.config.ts.timestamp-*
 # Local private audiobooks (keep only the placeholder AudioBooks.txt)
 mp3/*
 !mp3/AudioBooks.txt
+
+# Local self-signed SSL certificates (keep only certs/encode.sh)
+certs/*.key
+certs/*.pem
+certs/req.cnf
