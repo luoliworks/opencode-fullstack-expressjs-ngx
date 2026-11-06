@@ -74,7 +74,14 @@ export function signToken(user: { id: number; username: string; role: string }):
 
 export function verifyToken(token: string): AuthPayload | null {
   const parts: string[] = token.split('.');
-  if (parts.length !== 3) return null;
+  if (parts.length !== 3 || !parts[0] || !parts[1] || !parts[2]) return null;
+
+  // 1. Verify HMAC signature first (Verify-then-Parse) before parsing untrusted JSON.
+  const expected: Buffer = signPart(`${parts[0]}.${parts[1]}`);
+  const actual: Buffer = Buffer.from(parts[2], 'base64url');
+  if (actual.length !== expected.length || !timingSafeEqual(actual, expected)) return null;
+
+  // 2. Parse header & payload after signature is verified.
   let header: { alg?: unknown };
   let payload: AuthPayload;
   try {
@@ -84,10 +91,16 @@ export function verifyToken(token: string): AuthPayload | null {
     return null;
   }
   if (header.alg !== 'HS256') return null;
-  const expected: Buffer = signPart(`${parts[0]}.${parts[1]}`);
-  const actual = Buffer.from(parts[2], 'base64url');
-  if (actual.length !== expected.length || !timingSafeEqual(actual, expected)) return null;
-  if (typeof payload.exp !== 'number' || typeof payload.sub !== 'number') return null;
+
+  // 3. Validate claims and expiration.
+  if (
+    typeof payload.sub !== 'number' ||
+    typeof payload.username !== 'string' ||
+    typeof payload.role !== 'string' ||
+    typeof payload.exp !== 'number'
+  ) {
+    return null;
+  }
   if (payload.exp * 1000 < Date.now()) return null;
   return payload;
 }
