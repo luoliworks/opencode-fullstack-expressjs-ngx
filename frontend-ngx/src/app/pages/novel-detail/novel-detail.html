@@ -42,7 +42,7 @@
         </div>
       } @else {
         <div class="novel-workspace">
-          <!-- Left Column (Desktop): Compact Sticky Audio Player -->
+          <!-- Top Full-Width Sticky Horizontal Audio Console -->
           <div class="player-panel">
             <audio
               #audioEl
@@ -55,12 +55,33 @@
               (ended)="onEnded()"
             ></audio>
 
-            <div class="player-top">
-              <div class="player-status-row">
+            <!-- Row 1: Now Playing Title (Left) + Speed & Auto-Next (Right) -->
+            <div class="player-bar-top">
+              <div class="player-info">
                 <span class="now-playing-label" [class.playing]="isPlaying()">
                   <mat-icon>{{ isPlaying() ? 'graphic_eq' : 'headphones' }}</mat-icon>
                   {{ 'novels.nowPlaying' | translate }}
                 </span>
+                <h3 class="now-playing-title" [title]="currentChapter()?.title ?? ''">
+                  {{ currentChapter()?.title ?? '-' }}
+                </h3>
+              </div>
+
+              <div class="player-options">
+                <div class="speed-controls">
+                  <span class="speed-label">{{ 'novels.speed' | translate }}:</span>
+                  @for (s of speeds; track s) {
+                    <button
+                      type="button"
+                      class="speed-pill"
+                      [class.active]="speed() === s"
+                      (click)="setSpeed(s)"
+                    >
+                      {{ s }}x
+                    </button>
+                  }
+                </div>
+
                 <button
                   type="button"
                   class="auto-next-pill"
@@ -71,83 +92,69 @@
                   {{ 'novels.autoNext' | translate }}
                 </button>
               </div>
-              <h3 class="now-playing-title" [title]="currentChapter()?.title ?? ''">
-                {{ currentChapter()?.title ?? '-' }}
-              </h3>
             </div>
 
-            <div class="seek-row">
-              <span class="time-label">{{ novelsApi.formatTime(currentTime()) }}</span>
-              <input
-                type="range"
-                class="seek-slider"
-                min="0"
-                [max]="duration() || 100"
-                step="1"
-                [value]="currentTime()"
-                (input)="onSeek($event)"
-              />
-              <span class="time-label">{{ novelsApi.formatTime(duration()) }}</span>
-            </div>
-
-            <div class="transport-controls">
-              <button
-                mat-icon-button
-                (click)="prevChapter()"
-                [disabled]="!hasPrev()"
-                [attr.aria-label]="'novels.prevChapter' | translate"
-              >
-                <mat-icon>skip_previous</mat-icon>
-              </button>
-              <button
-                mat-icon-button
-                (click)="skip(-15)"
-                [attr.aria-label]="'novels.rewind15' | translate"
-              >
-                <mat-icon>replay_10</mat-icon>
-              </button>
-              <button
-                mat-fab
-                color="primary"
-                class="play-fab"
-                (click)="togglePlay()"
-                [attr.aria-label]="(isPlaying() ? 'novels.pause' : 'novels.play') | translate"
-              >
-                <mat-icon>{{ isPlaying() ? 'pause' : 'play_arrow' }}</mat-icon>
-              </button>
-              <button
-                mat-icon-button
-                (click)="skip(15)"
-                [attr.aria-label]="'novels.forward15' | translate"
-              >
-                <mat-icon>forward_10</mat-icon>
-              </button>
-              <button
-                mat-icon-button
-                (click)="nextChapter()"
-                [disabled]="!hasNext()"
-                [attr.aria-label]="'novels.nextChapter' | translate"
-              >
-                <mat-icon>skip_next</mat-icon>
-              </button>
-            </div>
-
-            <div class="speed-controls">
-              <span class="speed-label">{{ 'novels.speed' | translate }}:</span>
-              @for (s of speeds; track s) {
+            <!-- Row 2: Transport Controls + Full-Width Seek Slider -->
+            <div class="player-bar-controls">
+              <div class="transport-controls">
                 <button
-                  type="button"
-                  class="speed-pill"
-                  [class.active]="speed() === s"
-                  (click)="setSpeed(s)"
+                  mat-icon-button
+                  (click)="prevChapter()"
+                  [disabled]="!hasPrev()"
+                  [attr.aria-label]="'novels.prevChapter' | translate"
                 >
-                  {{ s }}x
+                  <mat-icon>skip_previous</mat-icon>
                 </button>
-              }
+                <button
+                  mat-icon-button
+                  (click)="skip(-15)"
+                  [attr.aria-label]="'novels.rewind15' | translate"
+                >
+                  <mat-icon>replay_10</mat-icon>
+                </button>
+                <button
+                  mat-fab
+                  color="primary"
+                  class="play-fab"
+                  (click)="togglePlay()"
+                  [attr.aria-label]="(isPlaying() ? 'novels.pause' : 'novels.play') | translate"
+                >
+                  <mat-icon>{{ isPlaying() ? 'pause' : 'play_arrow' }}</mat-icon>
+                </button>
+                <button
+                  mat-icon-button
+                  (click)="skip(15)"
+                  [attr.aria-label]="'novels.forward15' | translate"
+                >
+                  <mat-icon>forward_10</mat-icon>
+                </button>
+                <button
+                  mat-icon-button
+                  (click)="nextChapter()"
+                  [disabled]="!hasNext()"
+                  [attr.aria-label]="'novels.nextChapter' | translate"
+                >
+                  <mat-icon>skip_next</mat-icon>
+                </button>
+              </div>
+
+              <div class="seek-row">
+                <span class="time-label">{{ novelsApi.formatTime(currentTime()) }}</span>
+                <input
+                  type="range"
+                  class="seek-slider"
+                  min="0"
+                  [max]="duration() || 100"
+                  step="1"
+                  [value]="currentTime()"
+                  (input)="onSeek($event)"
+                />
+                <span class="time-label">{{ novelsApi.formatTime(duration()) }}</span>
+              </div>
             </div>
           </div>
 
-          <!-- Right Column (Desktop): Chapter Filter & Grid -->
+          <!-- Full-Width 4-Column Chapter Grid -->
           <div class="chapters-panel">
             <div class="chapters-toolbar">
               <h3 class="chapters-heading">
@@ -186,7 +193,7 @@
                     }}
                   </mat-icon>
                   <div class="chapter-text">
-                    <span class="chapter-title">{{ ch.title }}</span>
+                    <span class="chapter-title" [title]="ch.title">{{ ch.title }}</span>
                     <span class="chapter-size">{{ novelsApi.formatBytes(ch.sizeBytes) }}</span>
                   </div>
                 </button>
