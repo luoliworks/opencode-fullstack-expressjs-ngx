@@ -244,6 +244,11 @@
     "roleInvalid": "角色无效。",
     "loginRequired": "请输入用户名和密码。",
     "pageInvalid": "分页参数无效。",
-    "slugInvalid": "slug 无效。"
+    "slugInvalid": "slug 无效。",
+    "cannotDeleteSelf": "不能删除当前登录的自己的账号。",
+    "cannotDeleteLastAdmin": "不能删除系统中最后一位管理员。",
+    "cannotDemoteSelf": "不能降级当前登录的自己的管理员权限。",
+    "cannotDemoteLastAdmin": "不能降级系统中最后一位管理员。",
+    "firstUserMustBeAdmin": "首次初始化的第一个用户必须是管理员。"
   }
 }

@@ -1,5 +1,5 @@
 import { Router, type NextFunction, type Request, type Response } from 'express';
-import { eq } from 'drizzle-orm';
+import { count, eq } from 'drizzle-orm';
 import { db } from '../db/index.js';
 import { users, type User } from '../db/schema.js';
 import { hashPassword } from '../utils/password.js';
@@ -13,6 +13,10 @@ type PublicUser = Omit<User, 'passwordHash'>;
 function toPublic(row: User): PublicUser {
   const { passwordHash: _omitted, ...pub } = row;
   return pub;
+}
+
+function countAdmins(): number {
+  return db.select({ n: count() }).from(users).where(eq(users.role, 'admin')).get()?.n ?? 0;
 }
 
 function isUniqueViolation(err: unknown): boolean {
@@ -82,7 +86,7 @@ usersRouter.post(
     res.status(400).json({ error: 'username is required' });
     return;
   }
-  if (typeof email !== 'string' || !email.includes('@')) {
+  if (typeof email !== 'string' || !email.trim().includes('@')) {
     res.status(400).json({ error: 'valid email is required' });
     return;
   }
@@ -94,6 +98,11 @@ usersRouter.post(
     res.status(400).json({ error: "role must be 'admin', 'editor' or 'viewer'" });
     return;
   }
+  const isBootstrap = !req.auth;
+  if (isBootstrap && role !== undefined && role !== 'admin') {
+    res.status(400).json({ error: "First user must have role 'admin'" });
+    return;
+  }
   try {
     const row = db
       .insert(users)
@@ -102,7 +111,7 @@ usersRouter.post(
         email: email.trim(),
         passwordHash: hashPassword(password),
         displayName: typeof displayName === 'string' ? displayName : '',
-        ...(role === undefined ? {} : { role: role as Role }),
+        role: isBootstrap ? 'admin' : role === undefined ? 'viewer' : (role as Role),
       })
       .returning()
       .get();
@@ -128,7 +137,11 @@ usersRouter.patch('/:id', requireAuth, requireRole('admin'), (req: Request, res:
     displayName?: unknown;
     role?: unknown;
   };
-  if (email !== undefined && (typeof email !== 'string' || !email.includes('@'))) {
+  if (username !== undefined && (typeof username !== 'string' || username.trim() === '')) {
+    res.status(400).json({ error: 'username is required' });
+    return;
+  }
+  if (email !== undefined && (typeof email !== 'string' || !email.trim().includes('@'))) {
     res.status(400).json({ error: 'valid email is required' });
     return;
   }
@@ -140,12 +153,30 @@ usersRouter.patch('/:id', requireAuth, requireRole('admin'), (req: Request, res:
     res.status(400).json({ error: "role must be 'admin', 'editor' or 'viewer'" });
     return;
   }
+
+  const existing = db.select().from(users).where(eq(users.id, id)).get();
+  if (!existing) {
+    res.status(404).json({ error: 'Not found' });
+    return;
+  }
+
+  if (role !== undefined && role !== 'admin' && existing.role === 'admin') {
+    if (id === req.auth!.sub) {
+      res.status(400).json({ error: 'Cannot demote your own account' });
+      return;
+    }
+    if (countAdmins() <= 1) {
+      res.status(400).json({ error: 'Cannot demote the last admin' });
+      return;
+    }
+  }
+
   try {
     const row = db
       .update(users)
       .set({
-        ...(typeof username === 'string' ? { username } : {}),
-        ...(typeof email === 'string' ? { email } : {}),
+        ...(typeof username === 'string' ? { username: username.trim() } : {}),
+        ...(typeof email === 'string' ? { email: email.trim() } : {}),
         ...(typeof password === 'string' ? { passwordHash: hashPassword(password) } : {}),
         ...(typeof displayName === 'string' ? { displayName } : {}),
         ...(role === undefined ? {} : { role: role as Role }),
@@ -172,11 +203,20 @@ usersRouter.patch('/:id', requireAuth, requireRole('admin'), (req: Request, res:
 usersRouter.delete('/:id', requireAuth, requireRole('admin'), (req: Request, res: Response) => {
   const id: number | null = parseId(req.params.id, res);
   if (id === null) return;
-  const row = db.delete(users).where(eq(users.id, id)).returning().get();
-  if (!row) {
+  if (id === req.auth!.sub) {
+    res.status(400).json({ error: 'Cannot delete your own account' });
+    return;
+  }
+  const existing = db.select().from(users).where(eq(users.id, id)).get();
+  if (!existing) {
     res.status(404).json({ error: 'Not found' });
     return;
   }
+  if (existing.role === 'admin' && countAdmins() <= 1) {
+    res.status(400).json({ error: 'Cannot delete the last admin' });
+    return;
+  }
+  db.delete(users).where(eq(users.id, id)).run();
   res.status(204).end();
 });
 

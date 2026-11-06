@@ -22,6 +22,11 @@ const BACKEND_ERROR_KEYS: Record<string, string> = {
   'username and password are required': 'errors.loginRequired',
   'page and pageSize must be positive integers': 'errors.pageInvalid',
   'Invalid slug': 'errors.slugInvalid',
+  'Cannot delete your own account': 'errors.cannotDeleteSelf',
+  'Cannot delete the last admin': 'errors.cannotDeleteLastAdmin',
+  'Cannot demote your own account': 'errors.cannotDemoteSelf',
+  'Cannot demote the last admin': 'errors.cannotDemoteLastAdmin',
+  "First user must have role 'admin'": 'errors.firstUserMustBeAdmin',
 };
 
 // Sync translator hook, registered once by LanguageService (TranslateService

@@ -12,9 +12,11 @@
   <mat-card-content>
     @if (loading()) {
       <p>{{ 'common.loading' | translate }}</p>
-    } @else if (error()) {
-      <p class="form-error">{{ error() }}</p>
     } @else {
+      @if (error()) {
+        <p class="form-error">{{ error() }}</p>
+      }
+      @if (rows().length > 0) {
       <div class="table-wrap">
         <table mat-table [dataSource]="rows()" class="full-width admin-table">
           <ng-container matColumnDef="username">
@@ -97,6 +99,7 @@
           <tr mat-row *matRowDef="let row; columns: columns"></tr>
         </table>
       </div>
+      }
     }
   </mat-card-content>
 </mat-card>

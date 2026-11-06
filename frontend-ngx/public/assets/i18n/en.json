@@ -243,6 +243,11 @@
     "roleInvalid": "Invalid role.",
     "loginRequired": "Username and password are required.",
     "pageInvalid": "Invalid pagination parameters.",
-    "slugInvalid": "Invalid slug."
+    "slugInvalid": "Invalid slug.",
+    "cannotDeleteSelf": "You cannot delete your own account.",
+    "cannotDeleteLastAdmin": "Cannot delete the last remaining administrator.",
+    "cannotDemoteSelf": "You cannot demote your own administrator role.",
+    "cannotDemoteLastAdmin": "Cannot demote the last remaining administrator.",
+    "firstUserMustBeAdmin": "The initial bootstrap user must be an administrator."
   }
 }
