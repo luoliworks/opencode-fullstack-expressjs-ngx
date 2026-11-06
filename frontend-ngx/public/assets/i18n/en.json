@@ -20,6 +20,7 @@
     "articles": "Articles",
     "bookmarks": "Bookmarks",
     "novels": "Audiobooks",
+    "chat": "Lobby Chat",
     "users": "Users",
     "login": "Sign in",
     "logout": "Sign out",
@@ -116,6 +117,16 @@
     "speed": "Speed",
     "chaptersHeading": "Chapters",
     "searchPlaceholder": "Filter chapters…"
+  },
+  "chat": {
+    "title": "Family Lobby",
+    "subtitle": "In-memory LAN chat — URLs become clickable links automatically, cleared on server restart.",
+    "onlineCount": "{{count}} online:",
+    "clear": "Clear lobby",
+    "empty": "No messages yet. Say hello or paste a link to share!",
+    "placeholder": "Type a message or paste a URL… (Enter to send, Shift+Enter for newline)",
+    "send": "Send",
+    "copy": "Copy message"
   },
   "detail": {
     "notFound": "Article not found",

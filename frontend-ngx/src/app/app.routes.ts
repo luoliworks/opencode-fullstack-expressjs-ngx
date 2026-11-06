@@ -8,6 +8,7 @@ import { AdminUsers } from './pages/admin-users/admin-users';
 import { ArticleDetail } from './pages/article-detail/article-detail';
 import { Articles } from './pages/articles/articles';
 import { Bookmarks } from './pages/bookmarks/bookmarks';
+import { Chat } from './pages/chat/chat';
 import { Home } from './pages/home/home';
 import { Login } from './pages/login/login';
 import { NovelDetailPage } from './pages/novel-detail/novel-detail';
@@ -19,6 +20,7 @@ export const routes: Routes = [
   { path: 'bookmarks', component: Bookmarks, canActivate: [authGuard] },
   { path: 'novels', component: Novels, canActivate: [authGuard] },
   { path: 'novels/:name', component: NovelDetailPage, canActivate: [authGuard] },
+  { path: 'chat', component: Chat, canActivate: [authGuard] },
   { path: 'a/:slug', component: ArticleDetail },
   { path: 'admin', component: Admin, canActivate: [authGuard] },
   { path: 'admin/articles', component: AdminArticles, canActivate: [editorGuard] },

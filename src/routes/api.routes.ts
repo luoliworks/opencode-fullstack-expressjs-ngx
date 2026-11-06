@@ -2,6 +2,7 @@ import { Router, type Request, type Response } from 'express';
 import articlesRouter from './articles.routes.js';
 import authRouter from './auth.routes.js';
 import bookmarksRouter from './bookmarks.routes.js';
+import chatRouter from './chat.routes.js';
 import helloRouter from './hello.routes.js';
 import novelsRouter from './novels.routes.js';
 import setupRouter from './setup.routes.js';
@@ -13,7 +14,7 @@ const apiRouter: Router = Router();
 apiRouter.get('/', (_req: Request, res: Response) => {
   res.json({
     message: 'API root',
-    endpoints: ['/api/hello', '/api/login', '/api/setup', '/api/articles', '/api/bookmarks', '/api/novels', '/api/users'],
+    endpoints: ['/api/hello', '/api/login', '/api/setup', '/api/articles', '/api/bookmarks', '/api/novels', '/api/chat', '/api/users'],
   });
 });
 
@@ -31,6 +32,9 @@ apiRouter.use('/bookmarks', bookmarksRouter);
 // Audiobooks / novels under ./mp3 (login required):
 // GET /api/novels, GET /api/novels/:novel, GET /api/novels/:novel/stream/:file
 apiRouter.use('/novels', novelsRouter);
+// Family LAN chat lobby (login required, in-memory only):
+// GET|POST|DELETE /api/chat/messages, GET /api/chat/stream
+apiRouter.use('/chat', chatRouter);
 // Users CRUD: GET|POST /api/users, GET|PATCH|DELETE /api/users/:id
 apiRouter.use('/users', usersRouter);
 

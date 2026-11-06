@@ -20,6 +20,7 @@
     "articles": "文章",
     "bookmarks": "收藏",
     "novels": "听书",
+    "chat": "聊天大厅",
     "users": "用户",
     "login": "登录",
     "logout": "退出",
@@ -117,6 +118,16 @@
     "speed": "倍速",
     "chaptersHeading": "章节列表",
     "searchPlaceholder": "搜索集数…"
+  },
+  "chat": {
+    "title": "家庭聊天大厅",
+    "subtitle": "内网极简聊天室 — 粘贴的网址自动变为可点击链接，仅存内存，程序重启即清空。",
+    "onlineCount": "在线 {{count}} 人：",
+    "clear": "清空消息",
+    "empty": "大厅里还没有消息，发句话或粘贴一个网址分享吧！",
+    "placeholder": "输入消息或粘贴网址…（Enter 发送，Shift+Enter 换行）",
+    "send": "发送",
+    "copy": "复制内容"
   },
   "detail": {
     "notFound": "文章不存在",

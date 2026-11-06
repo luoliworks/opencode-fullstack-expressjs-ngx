@@ -53,6 +53,16 @@
           <mat-icon matListItemIcon>headphones</mat-icon>
           <span matListItemTitle>{{ 'nav.novels' | translate }}</span>
         </a>
+        <a
+          mat-list-item
+          routerLink="/chat"
+          routerLinkActive="drawer-active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          (click)="closeDrawer()"
+        >
+          <mat-icon matListItemIcon>forum</mat-icon>
+          <span matListItemTitle>{{ 'nav.chat' | translate }}</span>
+        </a>
 
         <mat-divider />
         <div mat-subheader>{{ 'nav.admin' | translate }}</div>
@@ -156,6 +166,12 @@
             routerLink="/novels"
             routerLinkActive="active-link"
           >{{ 'nav.novels' | translate }}</a>
+          <a
+            mat-button
+            routerLink="/chat"
+            routerLinkActive="active-link"
+            [routerLinkActiveOptions]="{ exact: true }"
+          >{{ 'nav.chat' | translate }}</a>
           <button mat-button [matMenuTriggerFor]="adminMenu" [class.active-link]="isAdminSection()">
             {{ 'nav.admin' | translate }}
             <mat-icon iconPositionEnd>expand_more</mat-icon>

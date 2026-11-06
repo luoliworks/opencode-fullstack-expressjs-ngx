@@ -1,0 +1,106 @@
+<mat-card appearance="outlined" class="chat-card">
+  <!-- Custom hero header (avoids mat-card-header flex wrapper quirks) -->
+  <div class="chat-header">
+    <div class="chat-header-info">
+      <div class="chat-title-row">
+        <mat-icon class="chat-title-icon">forum</mat-icon>
+        <h1 class="chat-title">{{ 'chat.title' | translate }}</h1>
+      </div>
+      <p class="chat-subtitle">{{ 'chat.subtitle' | translate }}</p>
+      <div class="presence-bar">
+        <span class="status-dot" [class.online]="connected()"></span>
+        <span class="presence-label">
+          {{ 'chat.onlineCount' | translate: { count: onlineUsers().length } }}
+        </span>
+        @for (u of onlineUsers(); track u) {
+          <span class="user-pill">{{ u }}</span>
+        }
+      </div>
+    </div>
+
+    @if (messages().length > 0) {
+      <button
+        mat-stroked-button
+        type="button"
+        class="clear-btn"
+        (click)="clearLobby()"
+      >
+        <mat-icon>delete_sweep</mat-icon>
+        {{ 'chat.clear' | translate }}
+      </button>
+    }
+  </div>
+
+  <!-- Message feed -->
+  <div class="chat-feed" #feedContainer>
+    @if (messages().length === 0) {
+      <div class="chat-empty">
+        <mat-icon class="empty-icon">chat_bubble_outline</mat-icon>
+        <p>{{ 'chat.empty' | translate }}</p>
+      </div>
+    } @else {
+      @for (msg of messages(); track msg.id) {
+        <div class="msg-row" [class.mine]="isMine(msg)">
+          @if (!isMine(msg)) {
+            <div class="msg-avatar" [attr.title]="msg.username">
+              {{ userInitial(msg.username) }}
+            </div>
+          }
+          <div class="msg-bubble-wrap">
+            <div class="msg-meta">
+              <span class="msg-author">{{ msg.username }}</span>
+              <span class="msg-time">{{ msg.createdAt | date: 'HH:mm:ss' }}</span>
+              <button
+                type="button"
+                class="copy-btn"
+                (click)="copyMessage(msg)"
+                [attr.title]="'chat.copy' | translate"
+              >
+                <mat-icon>{{ copiedId() === msg.id ? 'check' : 'content_copy' }}</mat-icon>
+              </button>
+            </div>
+            <div class="msg-bubble">
+              @for (seg of parseSegments(msg.text); track $index) {
+                @if (seg.type === 'link') {
+                  <a
+                    class="msg-link"
+                    [href]="seg.value"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <span>{{ seg.value }}</span>
+                    <mat-icon class="link-icon">open_in_new</mat-icon>
+                  </a>
+                } @else {
+                  <span>{{ seg.value }}</span>
+                }
+              }
+            </div>
+          </div>
+        </div>
+      }
+    }
+  </div>
+
+  <!-- Composer -->
+  <form class="chat-composer" (ngSubmit)="send()">
+    <textarea
+      class="composer-input"
+      name="draftText"
+      rows="2"
+      [(ngModel)]="draftText"
+      (keydown)="onKeydown($event)"
+      [placeholder]="'chat.placeholder' | translate"
+    ></textarea>
+    <button
+      mat-flat-button
+      color="primary"
+      type="submit"
+      class="send-btn"
+      [disabled]="!draftText.trim() || sending()"
+    >
+      <mat-icon>send</mat-icon>
+      <span>{{ 'chat.send' | translate }}</span>
+    </button>
+  </form>
+</mat-card>
